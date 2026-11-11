@@ -212,6 +212,7 @@ function buildHtmlDocument() {
       <a href="#stages">Deployment Stages</a>
       <a href="#fixture-anatomy">3D Rack Viewer</a>
       <a href="#stitch-showcase">Stitch UI</a>
+      <a href="#product-ui">Product UI</a>
       <a href="#simulator">Live Simulator</a>
       <a href="#dmu-gates">DMU &amp; Gates</a>
       <button type="button" class="btn-primary" data-open-kiosk>Launch Fullscreen Kiosk</button>
@@ -535,6 +536,34 @@ function buildHtmlDocument() {
             <a class="btn-secondary" href="https://stitch.google.com/projects/5268539669621980793" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:11px 16px;border-radius:10px;display:inline-flex;align-items:center;min-height:44px;">Open Stitch Project Canvas ↗</a>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <!-- SECTION 3b: LIVE PRODUCT UI (VISION LAB) -->
+    <section class="paper-section" id="product-ui">
+      <div class="section-meta">
+        <span>Live Product UI · Rack-Side Kiosk Experience [A]</span>
+        <div class="brand-logos">
+          <img class="color-logo" src="${colorLogoUri}" alt="Color logo">
+        </div>
+      </div>
+      <h2>The actual kiosk interface, running</h2>
+      <p>
+        This is the working product UI: welcome, optional photo, wardrobe interview and a look to find on the floor. It runs entirely in the browser with illustrative catalog data. Photos are editorial references, store locations are simulated, and nothing is stored or uploaded. Hosted prototype only (not part of the single-file download).
+      </p>
+      <div class="vision-frame">
+        <iframe
+          id="vision-frame"
+          title="Color-Play kiosk UI, interactive"
+          src="vision/index.html#ui-review"
+          loading="lazy"
+          allow="camera 'none'"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+      <div class="sim-action-row">
+        <a class="btn-secondary" href="vision/index.html#ui-review" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;min-height:44px;padding:12px 20px;border-radius:10px;">Open in a new tab</a>
+        <a class="btn-secondary" href="vision/index.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;min-height:44px;padding:12px 20px;border-radius:10px;">Open the full Vision Lab</a>
       </div>
     </section>
 

@@ -1,0 +1,23 @@
+{
+  "viewports": [
+    1440,
+    1024,
+    780,
+    390,
+    320
+  ],
+  "checks": [
+    "palette switching",
+    "pointer and keyboard sampling",
+    "color-only JSON export",
+    "clipboard",
+    "actual upload and exact red extraction",
+    "corrupt file recovery",
+    "camera capture stops media stream",
+    "camera cancellation",
+    "session erase",
+    "method disclosure"
+  ],
+  "errors": [],
+  "axe": []
+}

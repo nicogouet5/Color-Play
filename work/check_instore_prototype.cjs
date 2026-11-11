@@ -65,7 +65,7 @@ const artifactDir =
         width,
         `Horizontal overflow at viewport width ${width}: scrollWidth=${state.documentWidth}`
       );
-      assert.equal(state.sections, 5, 'Expected 5 main paper sections');
+      assert.equal(state.sections, 6, 'Expected 6 main paper sections');
       assert.equal(state.badImages, 0, 'Expected 0 broken images');
       if (state.isMobile) {
         assert.equal(
@@ -107,7 +107,7 @@ const artifactDir =
       id: v.id,
       impact: v.impact,
       description: v.description,
-      nodes: v.nodes.length
+      nodes: v.nodes.length, targets: v.nodes.map((n) => n.target.join(" ") + " " + n.html.slice(0,160))
     }));
     assert.deepEqual(
       report.axeViolations,

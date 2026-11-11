@@ -1,0 +1,41 @@
+{
+  "checks": [
+    "four photographic style options and supplied PNG logo",
+    "all habitual clothing choices have photographs",
+    "entry to optional-photo step; camera gated by consent",
+    "real capture with simulated device; track stopped; manual reference selection",
+    "wardrobe validation before personalized result",
+    "preference-aware result with photo products, reference and simulated store locations",
+    "alternative outfit and honest simulated assistance",
+    "restart erases kiosk photo, references and interview",
+    "direct review navigation labels sample results honestly",
+    "recoverable invalid upload",
+    "global clear also erases machine session"
+  ],
+  "viewports": [
+    1024,
+    780,
+    390,
+    320
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "axe": [
+    {
+      "stage": "welcome",
+      "violations": []
+    },
+    {
+      "stage": "photo",
+      "violations": []
+    },
+    {
+      "stage": "interview",
+      "violations": []
+    },
+    {
+      "stage": "result",
+      "violations": []
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "provider": "Unsplash",
+  "license": "https://unsplash.com/license",
+  "notice": "Fotografías de referencia descargadas para el prototipo. No representan inventario, colores exactos ni productos de una tienda asociada. El calzado formal es una referencia de categoría, no un modelo exacto de mocasín.",
+  "images": [
+    {
+      "id": "tee",
+      "file": "assets/clothes/tee.jpg",
+      "source": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+      "download": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "shirt",
+      "file": "assets/clothes/shirt.jpg",
+      "source": "https://images.unsplash.com/photo-1603252109303-2751441dd157",
+      "download": "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "knit",
+      "file": "assets/clothes/knit.jpg",
+      "source": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633",
+      "download": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "hoodie",
+      "file": "assets/clothes/hoodie.jpg",
+      "source": "https://images.unsplash.com/photo-1556821840-3a63f95609a7",
+      "download": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "jeans",
+      "file": "assets/clothes/jeans.jpg",
+      "source": "https://images.unsplash.com/photo-1542272604-787c3835535d",
+      "download": "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "chinos",
+      "file": "assets/clothes/chinos.jpg",
+      "source": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a",
+      "download": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "tailored",
+      "file": "assets/clothes/tailored.jpg",
+      "source": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80",
+      "download": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "skirt",
+      "file": "assets/clothes/skirt.jpg",
+      "source": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa",
+      "download": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "blazer",
+      "file": "assets/clothes/blazer.jpg",
+      "source": "https://images.unsplash.com/photo-1507679799987-c73779587ccf",
+      "download": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "overshirt",
+      "file": "assets/clothes/overshirt.jpg",
+      "source": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c",
+      "download": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "coat",
+      "file": "assets/clothes/coat.jpg",
+      "source": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3",
+      "download": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "sneakers",
+      "file": "assets/clothes/sneakers.jpg",
+      "source": "https://images.unsplash.com/photo-1549298916-b41d501d3772",
+      "download": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "loafers",
+      "file": "assets/clothes/loafers.jpg",
+      "source": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4",
+      "download": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=640&q=82"
+    },
+    {
+      "id": "boots",
+      "file": "assets/clothes/boots.jpg",
+      "source": "https://images.unsplash.com/photo-1520639888713-7851133b1ed0",
+      "download": "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=640&q=82"
+    }
+  ]
+}

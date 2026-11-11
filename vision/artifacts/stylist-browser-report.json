@@ -1,0 +1,34 @@
+{
+  "checks": [
+    "question validation and demo cannot become personal reference",
+    "manual confirmed color reference",
+    "six-question interview and exclusion-aware outfits",
+    "compatible garment swap with explanation refresh",
+    "outfit export includes preferences and no image",
+    "reference removal invalidates results; preference-only fallback",
+    "new image clears old references and outfits, preserves interview",
+    "edit interview preserves answers and invalidates old looks",
+    "reset clears photo, interview, references and outfits",
+    "honest no-compatible-look state",
+    "camera capture supports explicit tone roles"
+  ],
+  "viewports": [
+    1440,
+    1024,
+    780,
+    390,
+    320
+  ],
+  "errors": [],
+  "external": [],
+  "axe": [
+    {
+      "state": "interview",
+      "violations": []
+    },
+    {
+      "state": "outfits",
+      "violations": []
+    }
+  ]
+}
