@@ -2,6 +2,7 @@
 
 La entrega vigente está en [`ENTREGA_FINAL_v12/`](ENTREGA_FINAL_v12/) y el prototipo interactivo in-situ en tiendas está disponible en la raíz ([`index.html`](index.html)) para **GitHub Pages**:
 
+- **GitHub Pages (Live Demo):** https://nicogouet5.github.io/Color-Play/
 - **Prototipo In-Situ en Tienda (TypeScript + CSS, Inglés):** [index.html](index.html) / [Color-Play_InStore_Prototype_Standalone.html](ENTREGA_FINAL_v12/Color-Play_InStore_Prototype_Standalone.html). Incluye comparador de etapas de despliegue (Fase 1 Estudio Portátil vs. Fase 2 Estación Diferenciada en Rack vs. Hipótesis Makeup Champion `[A]`), elevación arquitectónica 1:20 interactiva del mobiliario y simulador táctil de 12" con modo Kiosco en pantalla completa (`<dialog>`).
 - **Stitch Canvas (Brand & Fixture Visualization):** Proyecto `5268539669621980793` (`https://stitch.google.com/projects/5268539669621980793`).
 - **HTML interactivo del Dossier:** [Color-Play_Certamen_II_Dossier_v12_Standalone.html](ENTREGA_FINAL_v12/Color-Play_Certamen_II_Dossier_v12_Standalone.html). Abrir directamente en navegador; no requiere servidor ni conexión.
@@ -46,6 +47,8 @@ En `work/`:
 
 ```sh
 npm ci --prefix work
+npm --prefix work run build:prototype
+npm --prefix work run check:prototype
 npm --prefix work run check
 npm --prefix work run audit
 npm --prefix work run build
