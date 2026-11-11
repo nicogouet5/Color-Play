@@ -1,0 +1,102 @@
+/* Color-Play / rubric edition. Motion lives behind paper, never behind copy. */
+@media screen {
+  body{background:#eee7ef}
+  #color-wave{z-index:0}
+  main{position:relative;z-index:1}
+  .slide{background:#fff}
+  .meta{letter-spacing:0}
+  .sub{max-width:75ch}
+  .table-wrap{border-radius:12px}
+  th{color:#4e4358;background:#f1ebf4}
+  td b{font-weight:650}
+  .meta-right .folio{margin-right:6px}
+  .tiny,.footer,.image-credit,.cover-visual figcaption,.meta,.folio,th,#s1 .three .card .pill,.landscape-y,.landscape-x{font-size:.75rem}
+}
+.rubric-list{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;padding:0;margin:0;list-style:none;counter-reset:deliverable}
+.rubric-list li{counter-increment:deliverable;border-top:1px solid var(--line)}
+.rubric-list a{display:grid;grid-template-columns:38px 1fr 22px;align-items:center;gap:12px;min-height:100px;padding:16px 0;text-decoration:none;color:var(--ink)}
+.rubric-list a:before{content:counter(deliverable,decimal-leading-zero);font:700 1rem var(--display);color:var(--pink);font-variant-numeric:tabular-nums}
+.rubric-list strong{display:block;font:750 1.25rem/1.3 var(--display);letter-spacing:-.02em}
+.rubric-list small{display:block;margin-top:5px;color:var(--muted);font-size:.8125rem}
+.rubric-list svg{width:20px;height:20px;fill:none;stroke:var(--pink);stroke-width:1.6;transition:transform 150ms ease-out}
+.rubric-list a:hover{color:var(--pink)}
+.rubric-list a:hover svg{transform:translateX(3px)}
+.rubric-list li:nth-child(8){background:var(--pale);padding:0 18px;margin:0 -18px;border-radius:0 0 12px 12px}
+.rubric-bridge{display:flex;gap:24px;justify-content:space-between;align-items:center;padding:18px 22px;background:var(--soft);border-radius:12px;font-size:.9375rem}
+.rubric-bridge a{flex:none;font-weight:650;min-height:44px;display:inline-flex;align-items:center}
+.plan-sheet{display:grid;grid-template-columns:1fr 1fr;gap:0 36px;align-content:start}
+.plan-cell{border-top:1px solid var(--line);padding:14px 0;break-inside:avoid}
+.plan-cell h3{font-size:1.0625rem;line-height:1.25;margin-bottom:7px}
+.plan-cell p{font-size:.9375rem;line-height:1.46;max-width:70ch;color:var(--muted)}
+.slide h1,.slide h2,.slide h3,.slide p,.rubric-list strong,.rubric-list small{overflow-wrap:anywhere}
+.rubric-list a>span{min-width:0}
+.grid>*,.dmu-role,.plan-cell{min-width:0}
+.meta>span{min-width:0;overflow-wrap:anywhere}
+.map-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.map-dot{min-width:0;overflow-wrap:anywhere}
+.plan-cell strong{color:var(--ink)}
+.plan-decision{grid-column:1/-1;background:var(--ink);color:white;padding:18px 22px;border-radius:12px;display:grid;grid-template-columns:180px 1fr;gap:24px}
+.plan-decision h3{font-size:1.125rem;color:#ff8dce}
+.plan-decision p{font-size:.9375rem;line-height:1.45}
+.assumption-table{table-layout:fixed}
+.assumption-table th:nth-child(1){width:19%}
+.assumption-table th:nth-child(2){width:26%}
+.assumption-table th:nth-child(3){width:31%}
+.assumption-table th:nth-child(4){width:24%}
+.assumption-table td{padding:20px 16px;font-size:.9375rem;line-height:1.46}
+.assumption-table th{font-size:.8125rem;padding:14px 16px}
+.assumption-table .assumption-id{display:block;color:var(--pink);font-weight:750;margin-bottom:7px}
+.assumption-table .owner{display:block;font-size:.8125rem;color:var(--muted);margin-top:9px}
+.log-links{display:flex;align-items:center;flex-wrap:wrap;gap:16px;font-size:.875rem}
+.log-links a{display:inline-flex;align-items:center;min-height:44px;font-weight:650}
+@media screen and (min-width:1100px){
+  main{width:calc(100% - 96px);max-width:1536px;margin:24px auto 0}
+  .slide{min-height:calc(100svh - 48px);padding:30px 48px 76px;margin-bottom:40px;border:0;border-radius:16px;box-shadow:0 16px 40px #37243e12}
+  #s1{gap:18px 36px}
+  #s1 h1{font-size:clamp(3.4rem,4.6vw,4.75rem)}
+  .cover-visual{border-radius:12px}
+  .slide h2{font-size:clamp(2rem,3vw,2.875rem)}
+  #s1 .three .card h2{font-size:1.0625rem}
+}
+@media screen and (max-width:1099px){
+  main{width:calc(100% - 32px);margin:16px auto 0}
+  .slide{margin-bottom:24px;border-radius:12px}
+}
+@media screen and (max-width:700px){
+  .rubric-list,.plan-sheet{grid-template-columns:1fr;gap:0}
+  .rubric-list a{min-height:90px;grid-template-columns:30px 1fr 20px;gap:8px}
+  .rubric-list strong{font-size:1.125rem}
+  .rubric-list li:nth-child(8){margin:0 -10px;padding:0 10px}
+  .rubric-bridge{display:block;padding:18px}
+  .rubric-bridge a{margin-top:8px}
+  .plan-cell{padding:18px 0}
+  .plan-cell h3{font-size:1.1875rem}
+  .plan-cell p{font-size:1rem}
+  .plan-decision{grid-template-columns:1fr;gap:10px}
+  .assumption-table{min-width:960px!important}
+}
+@media screen and (max-width:600px){
+  main{width:calc(100% - 20px);margin-top:10px}
+  .slide{padding:24px 18px 88px;border-radius:10px}
+  .meta>span{max-width:calc(100% - 115px)}
+  .meta-right{align-items:center}
+}
+@media print{
+  main{margin:0;width:auto}
+  .slide{margin:0;border-radius:0;box-shadow:none}
+  .rubric-list a{min-height:105px}
+  .plan-sheet{gap:0 36px}
+  .plan-cell{padding:13px 0}
+  .plan-cell p{font-size:.9375rem}
+  #one-page{gap:14px}
+  #one-page h2{font-size:2.75rem}
+  #assumptions-1 h2,#assumptions-2 h2{font-size:2.75rem}
+  #assumptions-1,#assumptions-2{gap:14px}
+  #assumptions-1 h2,#assumptions-2 h2{font-size:2.5rem}
+  #assumptions-1 h2 br,#assumptions-2 h2 br{display:none}
+  #assumptions-1 h2 .pink:before,#assumptions-2 h2 .pink:before{content:' '}
+  .assumption-table td{padding:16px;font-size:.875rem}
+  .assumption-table th{padding:12px 16px}
+  #assumptions-2 .rubric-bridge{font-size:.8125rem;padding:12px 18px}
+  .log-links a[download],.rubric-bridge a[download]{display:none}
+}

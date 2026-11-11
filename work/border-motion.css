@@ -1,0 +1,5 @@
+/* The ASCII wave is an edge treatment: the reading canvas stays transparent. */
+#color-wave{position:fixed;inset:0;width:100%;height:100%;z-index:15;pointer-events:none;contain:strict}
+.toolbar #motion-toggle svg{stroke-width:2}
+@media screen and (max-width:600px){.toolbar #print{display:none}.toolbar #motion-toggle{display:flex}}
+@media print{#color-wave,#motion-toggle{display:none!important}}

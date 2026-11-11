@@ -1,0 +1,184 @@
+{
+  "viewports": [
+    {
+      "width": 1536,
+      "documentWidth": 1536,
+      "slides": 26,
+      "badImages": 0,
+      "brokenAnchors": 0,
+      "marks": 0,
+      "wordmarks": 0,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "slide-select",
+          "w": 240,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "print",
+          "w": 80.3125,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 88.296875,
+          "h": 44
+        }
+      ],
+      "hiddenText": []
+    },
+    {
+      "width": 1024,
+      "documentWidth": 1024,
+      "slides": 26,
+      "badImages": 0,
+      "brokenAnchors": 0,
+      "marks": 0,
+      "wordmarks": 0,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "slide-select",
+          "w": 240,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "print",
+          "w": 80.3125,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 88.296875,
+          "h": 44
+        }
+      ],
+      "hiddenText": []
+    },
+    {
+      "width": 780,
+      "documentWidth": 780,
+      "slides": 26,
+      "badImages": 0,
+      "brokenAnchors": 0,
+      "marks": 0,
+      "wordmarks": 0,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "slide-select",
+          "w": 190,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "print",
+          "w": 80.3125,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 88.296875,
+          "h": 44
+        }
+      ],
+      "hiddenText": []
+    },
+    {
+      "width": 390,
+      "documentWidth": 390,
+      "slides": 26,
+      "badImages": 0,
+      "brokenAnchors": 0,
+      "marks": 0,
+      "wordmarks": 0,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "slide-select",
+          "w": 144,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 44,
+          "h": 44
+        }
+      ],
+      "hiddenText": []
+    },
+    {
+      "width": 320,
+      "documentWidth": 320,
+      "slides": 26,
+      "badImages": 0,
+      "brokenAnchors": 0,
+      "marks": 0,
+      "wordmarks": 0,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "slide-select",
+          "w": 100,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 44,
+          "h": 44
+        }
+      ],
+      "hiddenText": []
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "textZoom": "200% at 390px: no horizontal page overflow",
+  "printOverflow": [],
+  "motion": "Animated; pause freezes pixels and persists; reduced motion static; print hidden"
+}

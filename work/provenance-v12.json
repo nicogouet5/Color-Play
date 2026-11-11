@@ -1,0 +1,40 @@
+{
+  "pdf_pages": 57,
+  "main_slides": 20,
+  "appendices_A_F": 6,
+  "speaker_rationale_pages": 9,
+  "historical_source_and_feedback_pages": 22,
+  "embedded_source_pdfs": 8,
+  "embedded_pdf_hashes_unchanged": true,
+  "historical_pdf_text_unchanged": true,
+  "original_html_sha256": "f7c795f3d2b5774ed65699f5bdb4fc08c4a8542e5ccdb548310b3b6df3f1458e",
+  "new_html_sha256": "9cf2e9f2d756bd1904e619e5c92c868b09de522235af1ec9f94e3cd2e0983029",
+  "pdf_sha256": "f90524053373821e4d792798e8caa2c9ec01340e867cd3c046dae60ea66ec5f5",
+  "html_motion_update": "Palette ribbons behind opaque reading surfaces; 20fps; pause/reduced-motion/hidden-tab/print controls",
+  "color_logo_sha256": "53a80336711798863d533864e8b26ed267c54f26b2e2415aa53b38d981d608cc",
+  "color_logo_update": "26 current HTML/PDF sections: Color + Simple Tech desktop; Color only on mobile. Current rationale pages use supplied Color logo.",
+  "previous_html_sha256": "7c4148c770154dfa2d05664dcc232d6bc510657524bfc39a7f316be00e92293d",
+  "rubric_deliverables": 8,
+  "rubric_index_page": 2,
+  "one_page_plan_page": 16,
+  "assumption_log_pages": [
+    17,
+    18
+  ],
+  "historical_pdf_pages": [
+    36,
+    57
+  ],
+  "historical_pdf_rendered_pixels_unchanged": true,
+  "rebuild": "Current final HTML + last 22 pages of current final PDF; no v11 dependency",
+  "embedded_pdf_sha256": [
+    "53059d603a67677d17eb7c507f8ce534947e2c05de00b083868b3c3e3d2c2035",
+    "5831b82d178cbe0405cb7b2949217e813f9d1dbe5c2eede672c31df704bb75cb",
+    "3ea1cc56d825d29caf97820d38f96a2553027258d25cd6ba119e1e4e79e8145b",
+    "e8febbf5a89e1169ae52ff5cf1fe09c84a689317013920fabd8802e9b6b477a2",
+    "ae58f03102c8988c0b382363d809ee43353fe83be7c8c04e02a9f99d87c2de08",
+    "7697bd9f1f9dd31534a6c1ef9ac81c8cf8b3563e0366241056c5b9c54711704a",
+    "84b59795fbd1ccc71ee4a0bbcbb241d3d5df4036ab32cae4f2ec6e39ee0eda6c",
+    "f6883b9e3be41d65417df7a0ffb44dcb7f8596e90e948afbae1003bc98f8e680"
+  ]
+}

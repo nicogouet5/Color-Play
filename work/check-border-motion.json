@@ -1,0 +1,86 @@
+{
+  "animated": true,
+  "pauseStopsFrames": true,
+  "pausePersists": true,
+  "reducedMotionStopsFrames": true,
+  "printHidesFrame": true,
+  "transparency": {
+    "center": 0,
+    "edge": 255
+  },
+  "mobile": [
+    {
+      "width": 320,
+      "body": 320,
+      "toolbar": 296,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "body": 390,
+      "toolbar": 366,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "width": 780,
+      "body": 780,
+      "toolbar": 560.609375,
+      "controls": [
+        {
+          "id": "previous",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "next",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "id": "print",
+          "w": 80.3125,
+          "h": 44
+        },
+        {
+          "id": "motion-toggle",
+          "w": 88.296875,
+          "h": 44
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "externalRequests": []
+}

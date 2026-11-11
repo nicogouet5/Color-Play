@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "name": "color-play-presentation-tools",
+  "scripts": {
+    "check": "node check_rubric_v12.cjs",
+    "audit": "node audit_v12.cjs",
+    "build": "node render_rubric_v12.cjs && python3 assemble_rubric_v12.py",
+    "typecheck": "tsc --noEmit",
+    "build:prototype": "node build_prototype.mjs",
+    "check:prototype": "node check_instore_prototype.cjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "esbuild": "^0.25.0",
+    "playwright": "1.64.1",
+    "typescript": "^5.8.2"
+  }
+}

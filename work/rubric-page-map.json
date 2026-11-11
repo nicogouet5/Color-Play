@@ -1,0 +1,162 @@
+{
+  "corePages": 26,
+  "rationalePages": 9,
+  "slides": [
+    {
+      "page": 1,
+      "id": "s1",
+      "label": "Certamen II · Product Management I",
+      "title": "We test color clarityat the rack."
+    },
+    {
+      "page": 2,
+      "id": "rubric",
+      "label": "Rubric map · Eight current deliverables",
+      "title": "Eight deliverables.One connected retail strategy."
+    },
+    {
+      "page": 3,
+      "id": "s2",
+      "label": "Part A · Decision Ledger",
+      "title": "We retain the retail strategy and narrow its claims."
+    },
+    {
+      "page": 4,
+      "id": "s3",
+      "label": "Part A · Decision Ledger",
+      "title": "We revise the original work and gate the resource plan."
+    },
+    {
+      "page": 5,
+      "id": "s4",
+      "label": "Deliverable 1 · Value Proposition · WHO",
+      "title": "We narrowed the WHO to make the value proposition testable."
+    },
+    {
+      "page": 6,
+      "id": "dmu",
+      "label": "Part B · Retail decision-making unit · Proposed [A]",
+      "title": "Apparel owns the purchase.Makeup champions the opportunity."
+    },
+    {
+      "page": 7,
+      "id": "s5",
+      "label": "Deliverable 2 · Competitive Landscape",
+      "title": "We compete first against trial-and-error at the rack."
+    },
+    {
+      "page": 8,
+      "id": "s6",
+      "label": "Deliverable 3 · Strategic Positioning Memo",
+      "title": "We position Color-Play as the color-intelligence layer for retail clienteling."
+    },
+    {
+      "page": 9,
+      "id": "s7",
+      "label": "Deliverable 4 · Channel Management",
+      "title": "We route through the retailer because the decision happens in store."
+    },
+    {
+      "page": 10,
+      "id": "s8",
+      "label": "Supporting synthesis · Channel / customer integration · S5",
+      "title": "We test trust before we automate color advice."
+    },
+    {
+      "page": 11,
+      "id": "s9",
+      "label": "Deliverable 5 · Customer Analysis · Persona / Journey / Empathy",
+      "title": "We keep the rack handoff but defer capture and saving."
+    },
+    {
+      "page": 12,
+      "id": "s10",
+      "label": "Deliverable 6 · Business Plan · Economics",
+      "title": "We use the economics gap to bound the pilot."
+    },
+    {
+      "page": 13,
+      "id": "s12",
+      "label": "Deliverable 6 · Business Plan · Scope options",
+      "title": "We separate discovery, the station and the full platform."
+    },
+    {
+      "page": 14,
+      "id": "s13",
+      "label": "Deliverable 6 · Business Plan · Conditional recommendation",
+      "title": "We recommend the differentiated station because it maximizes learning per dependency."
+    },
+    {
+      "page": 15,
+      "id": "s11",
+      "label": "Deliverable 7 · BBBB · Build / Borrow / Buy / Bot",
+      "title": "Our pathway mixes build, borrow, buy and bot."
+    },
+    {
+      "page": 16,
+      "id": "one-page",
+      "label": "Deliverable 8 · One-Page Business Plan",
+      "title": "One-Page Business Plan.Apparel first. Proof before scale."
+    },
+    {
+      "page": 17,
+      "id": "assumptions-1",
+      "label": "Deliverable 8 · Assumption Log · 1 / 2",
+      "title": "Assumption Log.Desirability is not demand."
+    },
+    {
+      "page": 18,
+      "id": "assumptions-2",
+      "label": "Deliverable 8 · Assumption Log · 2 / 2",
+      "title": "Assumption Log.Access and economics earn the pilot."
+    },
+    {
+      "page": 19,
+      "id": "s14",
+      "label": "Part D · Integrated Storyline",
+      "title": "One strategy connects the shopper problem to a bounded retail experiment."
+    },
+    {
+      "page": 20,
+      "id": "s15",
+      "label": "Next Test · Evidence Gate",
+      "title": "The survey supports the concept—behavior is the next gate."
+    },
+    {
+      "page": 21,
+      "id": "a1",
+      "label": "Appendix A · Survey evidence log",
+      "title": "We advance three reported claims with five new findings."
+    },
+    {
+      "page": 22,
+      "id": "a2",
+      "label": "Appendix B · Decision-making unit / stakeholder value",
+      "title": "One buying unit. Different reasons to say yes."
+    },
+    {
+      "page": 23,
+      "id": "a3",
+      "label": "Appendix C · Source and artifact log",
+      "title": "We link revisions to originals and dated teacher feedback."
+    },
+    {
+      "page": 24,
+      "id": "a4",
+      "label": "Appendix D · Shopper confidence protocol",
+      "title": "Firsthand detail comes before a technical build."
+    },
+    {
+      "page": 25,
+      "id": "a5",
+      "label": "Appendix E · Recommendation-quality gate",
+      "title": "Before automation, define what a good recommendation means."
+    },
+    {
+      "page": 26,
+      "id": "a6",
+      "label": "Appendix F · Retailer and economics gate",
+      "title": "Retailer interest is not the same as operational readiness."
+    }
+  ]
+}
