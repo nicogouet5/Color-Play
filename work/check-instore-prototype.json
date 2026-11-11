@@ -3,45 +3,45 @@
     {
       "width": 1536,
       "documentWidth": 1536,
-      "sections": 4,
+      "sections": 5,
       "badImages": 0,
-      "colorLogos": 6,
-      "visibleSimpleTech": 5,
+      "colorLogos": 7,
+      "visibleSimpleTech": 6,
       "isMobile": false
     },
     {
       "width": 1024,
       "documentWidth": 1024,
-      "sections": 4,
+      "sections": 5,
       "badImages": 0,
-      "colorLogos": 6,
-      "visibleSimpleTech": 5,
+      "colorLogos": 7,
+      "visibleSimpleTech": 6,
       "isMobile": false
     },
     {
       "width": 780,
       "documentWidth": 780,
-      "sections": 4,
+      "sections": 5,
       "badImages": 0,
-      "colorLogos": 6,
-      "visibleSimpleTech": 5,
+      "colorLogos": 7,
+      "visibleSimpleTech": 6,
       "isMobile": false
     },
     {
       "width": 390,
       "documentWidth": 390,
-      "sections": 4,
+      "sections": 5,
       "badImages": 0,
-      "colorLogos": 6,
+      "colorLogos": 7,
       "visibleSimpleTech": 0,
       "isMobile": true
     },
     {
       "width": 320,
       "documentWidth": 320,
-      "sections": 4,
+      "sections": 5,
       "badImages": 0,
-      "colorLogos": 6,
+      "colorLogos": 7,
       "visibleSimpleTech": 0,
       "isMobile": true
     }
@@ -49,8 +49,11 @@
   "errors": [],
   "externalRequests": [],
   "interactiveFlow": {
+    "hero3dSwitcher": "PASS",
     "stageTabs": "PASS",
+    "rack3dCanvasAndPresets": "PASS",
     "fixtureHotspots": "PASS",
+    "stitchShowcaseBezelTilt": "PASS",
     "simulatorSteps": "PASS",
     "noResultRoute": "PASS",
     "kioskDialog": "PASS"

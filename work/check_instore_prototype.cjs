@@ -65,7 +65,7 @@ const artifactDir =
         width,
         `Horizontal overflow at viewport width ${width}: scrollWidth=${state.documentWidth}`
       );
-      assert.equal(state.sections, 4, 'Expected 4 main paper sections');
+      assert.equal(state.sections, 5, 'Expected 5 main paper sections');
       assert.equal(state.badImages, 0, 'Expected 0 broken images');
       if (state.isMobile) {
         assert.equal(
@@ -115,7 +115,9 @@ const artifactDir =
       `Axe WCAG A/AA violations found: ${JSON.stringify(report.axeViolations)}`
     );
 
-    // Screenshot 1: Hero & Stage Switcher
+    // Screenshot 1: Hero & 3D Concept Switcher
+    await page.locator('[data-hero-view="closeup"]').click();
+    await page.locator('[data-hero-view="store"]').click();
     await page.screenshot({
       path: path.join(artifactDir, 'prototype_hero_desktop.png')
     });
@@ -133,17 +135,35 @@ const artifactDir =
     );
     await page.locator('#tab-stage2').click();
 
-    // Test Fixture Hotspots & Screenshot 2
+    // Test Interactive 3D Viewer, Camera Presets, Fixture Hotspots & Screenshot 2
     await page.locator('#fixture-anatomy').scrollIntoViewIfNeeded();
+    await page.locator('[data-cam-preset="kiosk-closeup"]').click();
+    await page.locator('[data-cam-preset="isometric"]').click();
     await page.locator('[data-hotspot-btn="drape-rail"]').click();
     assert.ok(
       (await page.locator('#hotspot-detail-card').textContent()).includes(
         'Physical Fabric Comparison Drapes'
       )
     );
+    assert.ok(
+      (await page.locator('#rack-3d-canvas').evaluate((c) => c.width)) > 0,
+      'Expected rendered 3D rack canvas'
+    );
     await page.locator('#fixture-anatomy').screenshot({
       path: path.join(artifactDir, 'prototype_fixture_elevation.png')
     });
+
+    // Test Stitch Hardware Showcase & 45° Tilt Toggle (Screenshot 2b)
+    await page.locator('#stitch-showcase').scrollIntoViewIfNeeded();
+    await page.locator('#toggle-stitch-tilt').click();
+    assert.equal(
+      await page.locator('#toggle-stitch-tilt').getAttribute('aria-pressed'),
+      'true'
+    );
+    await page.locator('#stitch-showcase').screenshot({
+      path: path.join(artifactDir, 'prototype_stitch_showcase.png')
+    });
+    await page.locator('#toggle-stitch-tilt').click();
 
     // Test Interactive Simulator Walkthrough & Screenshot 3
     await page.locator('#simulator').scrollIntoViewIfNeeded();
@@ -220,8 +240,11 @@ const artifactDir =
     );
 
     report.interactiveFlow = {
+      hero3dSwitcher: 'PASS',
       stageTabs: 'PASS',
+      rack3dCanvasAndPresets: 'PASS',
       fixtureHotspots: 'PASS',
+      stitchShowcaseBezelTilt: 'PASS',
       simulatorSteps: 'PASS',
       noResultRoute: 'PASS',
       kioskDialog: 'PASS'

@@ -4,6 +4,11 @@ import {
   SHOPPER_SCENARIOS,
   STAGE_BLUEPRINTS
 } from './data';
+import {
+  type CameraPresetId,
+  initRack3DViewer,
+  type Rack3DController
+} from './rack3d';
 import type {
   DeploymentStageId,
   FixtureHotspotId,
@@ -12,6 +17,8 @@ import type {
   ShopperScenario,
   SimulatorStepId
 } from './types';
+
+let rack3d: Rack3DController | null = null;
 
 interface PrototypeState {
   activeStageId: DeploymentStageId;
@@ -94,6 +101,7 @@ function initStageTabs(): void {
     }
 
     renderFixtureDiagramState();
+    rack3d?.setStage(stageId);
     const stage = STAGE_BLUEPRINTS.find((s) => s.id === stageId);
     if (stage) {
       announcePolite(`Viewing ${stage.tabLabel}`);
@@ -190,6 +198,7 @@ function initFixtureHotspots(): void {
       if (!id) return;
       state.activeHotspotId = id;
       renderFixtureDiagramState();
+      rack3d?.setActiveHotspot(id, true);
       const found = FIXTURE_HOTSPOTS.find((h) => h.id === id);
       if (found) {
         announcePolite(`Selected fixture component: ${found.title}`);
@@ -572,6 +581,7 @@ function handleSimulatorClick(event: Event): void {
     const sc = getActiveScenario();
     state.selectedSkus = sc.rackGarments.slice(0, 2).map((g) => g.sku);
     state.telemetry.selectedGarmentSkus = [...state.selectedSkus];
+    rack3d?.setScenario(nextScenarioId);
     renderAllSimulatorSurfaces();
     announcePolite(`Selected scenario: ${sc.label}`);
     return;
@@ -846,11 +856,129 @@ function initPaletteWaveCanvas(): void {
   sync();
 }
 
+function initHeroGalleryAnd3DControls(): void {
+  // 1. Hero 3D Concept & Stitch View Switcher
+  const heroMainImg = document.querySelector<HTMLImageElement>('#hero-main-img');
+  const heroMainCaption =
+    document.querySelector<HTMLElement>('#hero-main-caption');
+  const heroViewBtns = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-hero-view]')
+  );
+
+  for (const btn of heroViewBtns) {
+    btn.addEventListener('click', () => {
+      const src = btn.dataset.heroSrc;
+      const alt = btn.dataset.heroAlt;
+      const caption = btn.dataset.heroCaption;
+      if (heroMainImg && src) {
+        heroMainImg.src = src;
+        if (alt) heroMainImg.alt = alt;
+      }
+      if (heroMainCaption && caption) {
+        heroMainCaption.textContent = caption;
+      }
+      for (const b of heroViewBtns) {
+        const active = b === btn;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-pressed', String(active));
+      }
+      if (caption) {
+        announcePolite(`Hero view switched: ${caption}`);
+      }
+    });
+  }
+
+  // 2. Interactive 360° 3D Rack-Kiosk Viewer
+  const canvas3d = document.querySelector<HTMLCanvasElement>('#rack-3d-canvas');
+  if (canvas3d) {
+    rack3d = initRack3DViewer({
+      canvas: canvas3d,
+      onSelectHotspot(hotspotId: FixtureHotspotId) {
+        state.activeHotspotId = hotspotId;
+        renderFixtureDiagramState();
+        rack3d?.setActiveHotspot(hotspotId, true);
+        const found = FIXTURE_HOTSPOTS.find((h) => h.id === hotspotId);
+        if (found) {
+          announcePolite(`Selected 3D fixture pin: ${found.title}`);
+        }
+      },
+      getInitialStage: () => state.activeStageId,
+      getInitialHotspot: () => state.activeHotspotId,
+      getInitialScenario: () => state.activeScenarioId
+    });
+  }
+
+  const camPresetBtns = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-cam-preset]')
+  );
+  for (const btn of camPresetBtns) {
+    btn.addEventListener('click', () => {
+      const preset = btn.dataset.camPreset as CameraPresetId | undefined;
+      if (!preset) return;
+      rack3d?.setCameraPreset(preset);
+      for (const b of camPresetBtns) {
+        const active = b === btn;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-pressed', String(active));
+      }
+      const orbitBtn =
+        document.querySelector<HTMLButtonElement>('#toggle-3d-orbit');
+      if (orbitBtn) {
+        orbitBtn.classList.remove('is-active');
+        orbitBtn.setAttribute('aria-pressed', 'false');
+      }
+      announcePolite(`3D camera preset: ${preset}`);
+    });
+  }
+
+  const lightBtn =
+    document.querySelector<HTMLButtonElement>('#toggle-3d-light');
+  lightBtn?.addEventListener('click', () => {
+    if (!rack3d) return;
+    const isOn = rack3d.toggleDaylightCone();
+    lightBtn.classList.toggle('is-active', isOn);
+    lightBtn.setAttribute('aria-pressed', String(isOn));
+    announcePolite(`5000K daylight cone ${isOn ? 'enabled' : 'disabled'}`);
+  });
+
+  const orbitBtn =
+    document.querySelector<HTMLButtonElement>('#toggle-3d-orbit');
+  orbitBtn?.addEventListener('click', () => {
+    if (!rack3d) return;
+    const isOrbiting = rack3d.toggleAutoRotate();
+    orbitBtn.classList.toggle('is-active', isOrbiting);
+    orbitBtn.setAttribute('aria-pressed', String(isOrbiting));
+    announcePolite(`360 auto-orbit ${isOrbiting ? 'started' : 'stopped'}`);
+  });
+
+  // 3. Stitch 3D Hardware Bezel Tilt Toggle
+  const stitchTiltFrame = document.querySelector<HTMLElement>(
+    '#stitch-bezel-frame'
+  );
+  const stitchTiltBtn = document.querySelector<HTMLButtonElement>(
+    '#toggle-stitch-tilt'
+  );
+  stitchTiltBtn?.addEventListener('click', () => {
+    if (!stitchTiltFrame) return;
+    const isTilted = stitchTiltFrame.classList.toggle('is-tilted-3d');
+    stitchTiltBtn.setAttribute('aria-pressed', String(isTilted));
+    stitchTiltBtn.textContent = isTilted
+      ? 'Switch to Flat 1:1 UI View'
+      : 'Switch to 45° 3D Console Tilt';
+    announcePolite(
+      isTilted
+        ? 'Viewing Stitch screen in 45-degree 3D console tilt'
+        : 'Viewing Stitch screen in flat 1:1 inspection mode'
+    );
+  });
+}
+
 function bootstrap(): void {
   // Export data reference count on documentElement for automated verification
   document.documentElement.dataset.dmuCount = String(DMU_STAKEHOLDERS.length);
   initStageTabs();
   initFixtureHotspots();
+  initHeroGalleryAnd3DControls();
   renderAllSimulatorSurfaces();
 
   const inlineSim = document.querySelector<HTMLElement>(

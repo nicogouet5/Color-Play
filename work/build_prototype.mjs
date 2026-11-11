@@ -29,18 +29,25 @@ function typecheckAndBundleTS() {
     process.exit(1);
   }
 
-  // Concatenate data.ts and instore-prototype.ts (stripping local import/export keywords) and transpile with TypeScript
+  // Concatenate data.ts, rack3d.ts, and instore-prototype.ts (stripping local import/export keywords) and transpile with TypeScript
   const dataSource = fs
     .readFileSync(path.join(__dirname, 'src/data.ts'), 'utf8')
     .replace(/import\s+type\s+\{[\s\S]*?\}\s+from\s+['"]\.\/types['"];?/g, '')
     .replace(/export\s+const\s+/g, 'const ');
 
+  const rack3dSource = fs
+    .readFileSync(path.join(__dirname, 'src/rack3d.ts'), 'utf8')
+    .replace(/import\s+type\s+\{[\s\S]*?\}\s+from\s+['"]\.\/types['"];?/g, '')
+    .replace(/export\s+(type|interface)\s+/g, '$1 ')
+    .replace(/export\s+function\s+/g, 'function ');
+
   const appSource = fs
     .readFileSync(path.join(__dirname, 'src/instore-prototype.ts'), 'utf8')
     .replace(/import\s+\{[\s\S]*?\}\s+from\s+['"]\.\/data['"];?/g, '')
+    .replace(/import\s+\{[\s\S]*?\}\s+from\s+['"]\.\/rack3d['"];?/g, '')
     .replace(/import\s+type\s+\{[\s\S]*?\}\s+from\s+['"]\.\/types['"];?/g, '');
 
-  const combinedTS = `(() => {\n${dataSource}\n${appSource}\n})();`;
+  const combinedTS = `(() => {\n${dataSource}\n${rack3dSource}\n${appSource}\n})();`;
   const transpiled = ts.transpileModule(combinedTS, {
     compilerOptions: {
       target: ts.ScriptTarget.ES2022,
@@ -148,6 +155,11 @@ function createCsvDataUri() {
   return `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
 }
 
+function loadJpegDataUri(fileName) {
+  const bytes = fs.readFileSync(path.join(__dirname, 'assets', fileName));
+  return `data:image/jpeg;base64,${bytes.toString('base64')}`;
+}
+
 const fontBase64 = fs
   .readFileSync(path.join(__dirname, 'Manrope.ttf'))
   .toString('base64');
@@ -156,7 +168,11 @@ const colorLogoBase64 = fs
   .toString('base64');
 const colorLogoUri = `data:image/png;base64,${colorLogoBase64}`;
 const simpleTechUri = createSimpleTechSvgDataUri();
-const heroSceneUri = createHeroSceneSvgDataUri();
+const render3dHeroUri = loadJpegDataUri('render_3d_hero_store.jpg');
+const render3dCloseupUri = loadJpegDataUri('render_3d_kiosk_closeup.jpg');
+const render3dStage1Uri = loadJpegDataUri('render_3d_stage1_portable.jpg');
+const stitchKioskUri = loadJpegDataUri('stitch_kiosk_ui.jpg');
+const stitchBrandUri = loadJpegDataUri('stitch_brand_visualize.jpg');
 const csvUri = createCsvDataUri();
 
 const cssRaw = fs.readFileSync(
@@ -194,8 +210,9 @@ function buildHtmlDocument() {
     </div>
     <nav class="header-nav" aria-label="Prototype sections">
       <a href="#stages">Deployment Stages</a>
-      <a href="#fixture-anatomy">Fixture Elevation</a>
-      <a href="#simulator">Live Rack Simulator</a>
+      <a href="#fixture-anatomy">3D Rack Viewer</a>
+      <a href="#stitch-showcase">Stitch UI</a>
+      <a href="#simulator">Live Simulator</a>
       <a href="#dmu-gates">DMU &amp; Gates</a>
       <button type="button" class="btn-primary" data-open-kiosk>Launch Fullscreen Kiosk</button>
     </nav>
@@ -239,11 +256,17 @@ function buildHtmlDocument() {
         </div>
 
         <figure class="hero-figure">
-          <img src="${heroSceneUri}" alt="Architectural diagram of the Color-Play in-store rack station showing 5000K neutral canopy light, physical fabric drapes, 12-inch touch screen, and numbered garment hooks 01 to 05.">
+          <img id="hero-main-img" src="${render3dHeroUri}" alt="Photorealistic 3D architectural render of the Color-Play modular rack and 12-inch touch kiosk station in a modern retail department store.">
           <figcaption>
-            <span>In-store rack bay elevation · Physical drapes + Hooks 01–06</span>
+            <span id="hero-main-caption">3D Architectural Concept · Stage 2 Modular Rack &amp; 12&quot; Kiosk Bay [A]</span>
             <span class="swatches" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           </figcaption>
+          <div class="hero-view-switcher" role="group" aria-label="Switch 3D concept render and Stitch view">
+            <button type="button" class="hero-view-btn is-active" data-hero-view="store" data-hero-src="${render3dHeroUri}" data-hero-caption="3D Architectural Concept · Stage 2 Modular Rack & 12&quot; Kiosk Bay [A]" data-hero-alt="Photorealistic 3D architectural render of the Color-Play modular rack and 12-inch touch kiosk station in a modern retail department store." aria-pressed="true">3D Store Fixture</button>
+            <button type="button" class="hero-view-btn" data-hero-view="closeup" data-hero-src="${render3dCloseupUri}" data-hero-caption="3D Industrial Design Macro · 45° Kiosk Console & Woven Textile Drapes [A]" data-hero-alt="Close-up 3D industrial design render of the 45-degree angled 12-inch kiosk touchscreen above four tactile fabric swatches." aria-pressed="false">12&quot; Kiosk Close-Up</button>
+            <button type="button" class="hero-view-btn" data-hero-view="stage1" data-hero-src="${render3dStage1Uri}" data-hero-caption="3D Concept · Stage 1 Portable Discovery Rack with Swatch Binder (Zero Screen) [A]" data-hero-alt="3D render of the Stage 1 portable retail study rack with caster wheels, 5000K clip-on light bar, and analog swatch binder." aria-pressed="false">Stage 1 Portable</button>
+            <button type="button" class="hero-view-btn" data-hero-view="stitch" data-hero-src="${stitchKioskUri}" data-hero-caption="Stitch Canvas · 12-Inch Touchscreen Kiosk UI Spec (Node d48957e4)" data-hero-alt="High-resolution Stitch UI design for the 12-inch touchscreen kiosk showing Cool Berry and Navy fabric comparison and Hooks 01, 03, 05 stock." aria-pressed="false">Stitch Kiosk UI</button>
+          </div>
         </figure>
       </div>
 
@@ -399,70 +422,38 @@ function buildHtmlDocument() {
       </div>
     </section>
 
-    <!-- SECTION 2: PHYSICAL FIXTURE ELEVATION & HOTSPOTS -->
+    <!-- SECTION 2: INTERACTIVE 3D RACK-KIOSK VIEWER & 3D ARCHITECTURAL RENDERS -->
     <section class="paper-section" id="fixture-anatomy">
       <div class="section-meta">
-        <span>Physical Store Anatomy · 1:20 Front Elevation &amp; Hardware Specification [A]</span>
+        <span>Interactive 360° 3D Fixture Model &amp; Industrial Renders · Stages 1–3 [A]</span>
         <div class="brand-logos">
           <img class="color-logo" src="${colorLogoUri}" alt="Color logo">
           <img class="simple-tech-logo" src="${simpleTechUri}" alt="Simple Tech attribution">
         </div>
       </div>
 
-      <h2>How the station fits into a standard <span class="pink">retail garment bay.</span></h2>
+      <h2>Explore the rack &amp; kiosk <span class="pink">in interactive 3D.</span></h2>
       <p class="section-lead">
-        Select any numbered hardware component below (<strong>01</strong> to <strong>05</strong>) to inspect how the physical fixture operates in both the portable discovery study (Stage 1) and the differentiated rack station (Stage 2).
+        Drag to orbit the physical station in 3D, switch camera presets, toggle the <strong>5000K daylight canopy cone</strong>, or select any numbered component (<strong>01</strong>–<strong>05</strong>) to inspect hardware specifications across Stage 1 and Stage 2.
       </p>
 
       <div class="fixture-explorer-grid">
         <div class="fixture-elevation-box">
-          <div class="fixture-svg-wrap">
-            <svg class="fixture-svg" viewBox="0 0 680 380" role="img" aria-label="Technical front elevation of the Color-Play retail rack fixture with numbered callouts 01 through 05">
-              <rect width="680" height="380" rx="10" fill="#f8f6fa"/>
-              <!-- Canopy Light (01) -->
-              <rect x="60" y="24" width="560" height="22" rx="8" fill="#201b27"/>
-              <rect x="90" y="31" width="500" height="8" rx="4" fill="#fff9e6"/>
-              <circle cx="340" cy="35" r="14" fill="#b80a6b"/>
-              <text x="340" y="40" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">01</text>
-
-              <!-- Rack Frame -->
-              <rect x="80" y="64" width="520" height="280" rx="8" fill="none" stroke="#201b27" stroke-width="5"/>
-              <line x1="50" y1="344" x2="630" y2="344" stroke="#201b27" stroke-width="7" stroke-linecap="round"/>
-
-              <!-- Left Sub-Bay: Terminal (03) + Drapes (02) + Pass (05) -->
-              <rect x="104" y="88" width="196" height="224" rx="10" fill="#ffffff" stroke="#ddd7e3" stroke-width="2"/>
-              <!-- Terminal Screen (03) -->
-              <rect x="122" y="104" width="160" height="96" rx="8" fill="#201b27"/>
-              <text x="202" y="146" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="12" font-weight="800" fill="#ffffff">12&quot; TOUCH TERMINAL</text>
-              <text x="202" y="164" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="10" font-weight="600" fill="#ff8dce">45° Tilt · 115 cm ADA Height</text>
-              <circle cx="274" cy="112" r="14" fill="#b80a6b"/>
-              <text x="274" y="117" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">03</text>
-
-              <!-- Physical Drapes (02) -->
-              <rect x="122" y="214" width="34" height="36" rx="5" fill="#b80a6b"/>
-              <rect x="164" y="214" width="34" height="36" rx="5" fill="#d999be"/>
-              <rect x="206" y="214" width="34" height="36" rx="5" fill="#b84a27"/>
-              <rect x="248" y="214" width="34" height="36" rx="5" fill="#4a5d3f"/>
-              <circle cx="122" cy="214" r="14" fill="#b80a6b"/>
-              <text x="122" y="219" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">02</text>
-
-              <!-- Ephemeral Pass Strip (05) -->
-              <rect x="122" y="264" width="160" height="32" rx="6" fill="#fcecf5" stroke="#b80a6b" stroke-width="1.5"/>
-              <text x="196" y="284" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="9" font-weight="800" fill="#b80a6b">EPHEMERAL HOOK PASS (ZERO CRM)</text>
-              <circle cx="282" cy="258" r="14" fill="#b80a6b"/>
-              <text x="282" y="263" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">05</text>
-
-              <!-- Right Sub-Bay: Curated Garment Rail Hooks 01-06 (04) -->
-              <line x1="324" y1="104" x2="574" y2="104" stroke="#201b27" stroke-width="5"/>
-              <rect x="334" y="114" width="68" height="172" rx="8" fill="#b80a6b"/>
-              <text x="368" y="202" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">HOOK 01</text>
-              <rect x="414" y="114" width="68" height="172" rx="8" fill="#d5b8d7" stroke="#201b27" stroke-width="1.5"/>
-              <text x="448" y="202" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#201b27">HOOK 03</text>
-              <rect x="494" y="114" width="68" height="172" rx="8" fill="#244e91"/>
-              <text x="528" y="202" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">HOOK 05</text>
-              <circle cx="448" cy="114" r="14" fill="#b80a6b"/>
-              <text x="448" y="119" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">04</text>
-            </svg>
+          <div class="rack3d-stage-wrap">
+            <canvas id="rack-3d-canvas" tabindex="0" aria-label="Interactive 360-degree 3D model of the Color-Play retail rack and 12-inch touchscreen kiosk. Drag or use arrow keys to rotate and inspect hardware pins 01 to 05."></canvas>
+            <div class="rack3d-controls-bar">
+              <div class="rack3d-preset-group" role="group" aria-label="3D camera angle presets">
+                <button type="button" class="rack3d-btn is-active" data-cam-preset="isometric" aria-pressed="true">3/4 Isometric</button>
+                <button type="button" class="rack3d-btn" data-cam-preset="front" aria-pressed="false">Front Elevation</button>
+                <button type="button" class="rack3d-btn" data-cam-preset="kiosk-closeup" aria-pressed="false">Kiosk Console</button>
+                <button type="button" class="rack3d-btn" data-cam-preset="rack-hooks" aria-pressed="false">Hooks 01–06</button>
+                <button type="button" class="rack3d-btn" data-cam-preset="top-floorplan" aria-pressed="false">Footprint</button>
+              </div>
+              <div class="rack3d-toggle-group">
+                <button type="button" class="rack3d-btn is-active" id="toggle-3d-light" aria-pressed="true">5000K Cone: On</button>
+                <button type="button" class="rack3d-btn" id="toggle-3d-orbit" aria-pressed="false">360° Auto-Orbit</button>
+              </div>
+            </div>
           </div>
 
           <div class="hotspot-buttons-row" role="group" aria-label="Fixture hardware hotspots">
@@ -475,6 +466,75 @@ function buildHtmlDocument() {
         </div>
 
         <div class="hotspot-detail-panel" id="hotspot-detail-card" aria-live="polite"></div>
+      </div>
+
+      <div class="renders-3d-strip" aria-label="Photorealistic 3D store renders">
+        <article class="render-3d-card">
+          <img src="${render3dHeroUri}" alt="Stage 2 modular rack and 12-inch kiosk station positioned inside a modern retail apparel floor">
+          <strong>Stage 2 · In-Situ Bay Integration [A]</strong>
+          <p>1.2 m² footprint pairing an angled 12&quot; touch kiosk, mirror bay, and 5000K canopy with 6 curated tops in stock.</p>
+        </article>
+        <article class="render-3d-card">
+          <img src="${render3dCloseupUri}" alt="Close-up industrial design view of the tilted 12-inch kiosk housing and four real fabric swatches mounted underneath">
+          <strong>Hardware Detail · Screen + Real Drapes [A]</strong>
+          <p>Anti-glare 45° console directly above real woven fabric tabs so explanations stay grounded in tangible cloth.</p>
+        </article>
+        <article class="render-3d-card">
+          <img src="${render3dStage1Uri}" alt="Stage 1 portable rolling rack with clip-on 5000K LED bar and analog printed drape guide without a screen">
+          <strong>Stage 1 · Portable Discovery Study [A]</strong>
+          <p>0.8 m² rolling fixture with clip-on daylight and analog swatch binder to validate A1–A2 before screen investment.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 3: STITCH CANVAS & 12-INCH HARDWARE BEZEL SHOWCASE -->
+    <section class="paper-section" id="stitch-showcase">
+      <div class="section-meta">
+        <span>Stitch Canvas Verification · Project 5268539669621980793</span>
+        <div class="brand-logos">
+          <img class="color-logo" src="${colorLogoUri}" alt="Color logo">
+          <img class="simple-tech-logo" src="${simpleTechUri}" alt="Simple Tech attribution">
+        </div>
+      </div>
+
+      <h2>Inspect the Stitch UI inside <span class="pink">the 12&quot; kiosk bezel.</span></h2>
+      <p class="section-lead">
+        Both the 12-inch touch interface (<code>node d48957e4</code>) and the full in-store system canvas (<code>node 10958707</code>) are generated and synced to <strong>Stitch Canvas</strong>. Toggle the hardware perspective below to preview how the Stitch screen sits inside the angled aluminum console above the four physical fabric tabs.
+      </p>
+
+      <div class="stitch-showcase-grid">
+        <div class="stitch-bezel-stage">
+          <div class="stitch-bezel-frame" id="stitch-bezel-frame">
+            <div class="stitch-bezel-bar">
+              <span>HARDWARE BAY A · 12&quot; ANTI-GLARE BEZEL (45° TILT)</span>
+              <span>STITCH NODE d48957e4</span>
+            </div>
+            <img class="stitch-bezel-screen" src="${stitchKioskUri}" alt="Stitch Canvas 12-inch kiosk interface showing physical optical protocol, Cool Berry vs Warm Terracotta drapes, Hooks 01-05 inventory, and safe Unclear / No Result exit">
+            <div class="stitch-drape-strip" aria-hidden="true">
+              <div class="stitch-drape-tab" style="background:#b80a6b;" title="Drape 1: Cool Berry"></div>
+              <div class="stitch-drape-tab" style="background:#d999be;" title="Drape 2: Soft Lavender Rose"></div>
+              <div class="stitch-drape-tab" style="background:#b84a27;" title="Drape 3: Warm Terracotta"></div>
+              <div class="stitch-drape-tab" style="background:#4a5d3f;" title="Drape 4: Muted Olive"></div>
+            </div>
+          </div>
+          <div class="sim-action-row">
+            <button type="button" class="btn-secondary" id="toggle-stitch-tilt" aria-pressed="false">Switch to 45° 3D Console Tilt</button>
+            <button type="button" class="btn-primary" data-open-kiosk>Run Interactive Live Kiosk →</button>
+          </div>
+        </div>
+
+        <aside class="stitch-meta-panel" aria-label="Stitch Canvas screens and synchronization details">
+          <h3>Stitch Canvas Assets</h3>
+          <p>Generated via <code>stitch generate screen</code> against our uploaded <code>DESIGN.md</code> tokens and design system (<code>Color-Play · Retail Color Guidance v12</code>).</p>
+          <div class="stitch-thumb-card">
+            <strong>01 · Brand &amp; Fixture Landing Canvas</strong>
+            <img src="${stitchBrandUri}" alt="Full-page Stitch Canvas visualization of Color-Play architectural layout and evidence rubric">
+            <p>Project <code>5268539669621980793</code> · Light editorial paper surface, fuchsia accents, and <code>[O]</code>/<code>[A]</code> notation.</p>
+          </div>
+          <div class="sim-action-row">
+            <a class="btn-secondary" href="https://stitch.google.com/projects/5268539669621980793" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:11px 16px;border-radius:10px;display:inline-flex;align-items:center;min-height:44px;">Open Stitch Project Canvas ↗</a>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -584,7 +644,8 @@ function buildHtmlDocument() {
 
   <nav class="utility-bar" aria-label="Quick prototype controls">
     <a href="#stages">Stages</a>
-    <a href="#fixture-anatomy">Fixture</a>
+    <a href="#fixture-anatomy">3D Rack</a>
+    <a href="#stitch-showcase">Stitch</a>
     <a href="#simulator">Simulator</a>
     <button type="button" data-open-kiosk title="Open fullscreen kiosk mode">Kiosk</button>
     <button type="button" id="motion-toggle" aria-label="Pause animated background" aria-pressed="false" title="Pause animated background">
