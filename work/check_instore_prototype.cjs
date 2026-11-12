@@ -44,9 +44,9 @@ const artifactDir =
 
       const state = await page.evaluate(() => {
         const isMobile = window.innerWidth <= 600;
-        const visibleSimpleTech = [...document.querySelectorAll('.simple-tech-logo')].filter(
-          (el) => getComputedStyle(el).display !== 'none'
-        ).length;
+        const visibleSimpleTech = [
+          ...document.querySelectorAll('.simple-tech-logo')
+        ].filter((el) => getComputedStyle(el).display !== 'none').length;
         return {
           width: window.innerWidth,
           documentWidth: document.documentElement.scrollWidth,
@@ -65,7 +65,11 @@ const artifactDir =
         width,
         `Horizontal overflow at viewport width ${width}: scrollWidth=${state.documentWidth}`
       );
-      assert.equal(state.sections, 6, 'Expected 6 main paper sections');
+      assert.equal(
+        state.sections,
+        3,
+        'Expected strictly 3 main paper sections (Presentation, 3D Prototype, Kiosk UI)'
+      );
       assert.equal(state.badImages, 0, 'Expected 0 broken images');
       if (state.isMobile) {
         assert.equal(
@@ -107,7 +111,10 @@ const artifactDir =
       id: v.id,
       impact: v.impact,
       description: v.description,
-      nodes: v.nodes.length, targets: v.nodes.map((n) => n.target.join(" ") + " " + n.html.slice(0,160))
+      nodes: v.nodes.length,
+      targets: v.nodes.map(
+        (n) => n.target.join(' ') + ' ' + n.html.slice(0, 160)
+      )
     }));
     assert.deepEqual(
       report.axeViolations,
@@ -115,14 +122,13 @@ const artifactDir =
       `Axe WCAG A/AA violations found: ${JSON.stringify(report.axeViolations)}`
     );
 
-    // Screenshot 1: Hero & 3D Concept Switcher
+    // Chapter 01: Hero & 3D Concept Switcher + Stage Tabs
     await page.locator('[data-hero-view="closeup"]').click();
     await page.locator('[data-hero-view="store"]').click();
     await page.screenshot({
       path: path.join(artifactDir, 'prototype_hero_desktop.png')
     });
 
-    // Test Stage Tabs
     await page.locator('#tab-stage1').click();
     assert.equal(
       await page.locator('#tab-stage1').getAttribute('aria-selected'),
@@ -135,8 +141,8 @@ const artifactDir =
     );
     await page.locator('#tab-stage2').click();
 
-    // Test Interactive 3D Viewer, Camera Presets, Fixture Hotspots & Screenshot 2
-    await page.locator('#fixture-anatomy').scrollIntoViewIfNeeded();
+    // Chapter 02: Interactive 360° 3D Viewer, Camera Presets & Hotspots
+    await page.locator('#fixture-3d').scrollIntoViewIfNeeded();
     await page.locator('[data-cam-preset="kiosk-closeup"]').click();
     await page.locator('[data-cam-preset="isometric"]').click();
     await page.locator('[data-hotspot-btn="drape-rail"]').click();
@@ -149,81 +155,41 @@ const artifactDir =
       (await page.locator('#rack-3d-canvas').evaluate((c) => c.width)) > 0,
       'Expected rendered 3D rack canvas'
     );
-    await page.locator('#fixture-anatomy').screenshot({
+    await page.locator('#fixture-3d').screenshot({
       path: path.join(artifactDir, 'prototype_fixture_elevation.png')
     });
 
-    // Test Stitch Hardware Showcase & 45° Tilt Toggle (Screenshot 2b)
-    await page.locator('#stitch-showcase').scrollIntoViewIfNeeded();
-    await page.locator('#toggle-stitch-tilt').click();
-    assert.equal(
-      await page.locator('#toggle-stitch-tilt').getAttribute('aria-pressed'),
-      'true'
-    );
-    await page.locator('#stitch-showcase').screenshot({
-      path: path.join(artifactDir, 'prototype_stitch_showcase.png')
-    });
-    await page.locator('#toggle-stitch-tilt').click();
-
-    // Test Interactive Simulator Walkthrough & Screenshot 3
-    await page.locator('#simulator').scrollIntoViewIfNeeded();
-    await page
-      .locator('#simulator-inline-root [data-sim-action="start-comparison"]')
-      .click();
-    await page
-      .locator('#simulator-inline-root [data-sim-scenario="warm-autumn"]')
-      .click();
-    await page
-      .locator('#simulator-inline-root [data-sim-action="view-palette"]')
-      .click();
-    assert.ok(
-      (await page.locator('#simulator-inline-root').textContent()).includes(
-        'Spiced Terracotta'
-      )
-    );
-    await page
-      .locator('#simulator-inline-root [data-sim-action="view-rack"]')
-      .click();
-    await page
-      .locator('#simulator-inline-root [data-sim-action="toggle-qr-pass"]')
-      .click();
-    assert.ok(
-      await page.locator('#simulator-inline-root .sim-ephemeral-pass').isVisible()
-    );
-    await page.locator('#simulator').screenshot({
-      path: path.join(artifactDir, 'prototype_simulator_rack_matches.png')
+    // Chapter 03: Isolated Vision Kiosk UI (Welcome -> Photo -> Clothes -> Result)
+    await page.locator('#kiosk-ui').scrollIntoViewIfNeeded();
+    await page.locator('#kiosk-ui').screenshot({
+      path: path.join(artifactDir, 'prototype_kiosk_welcome.png')
     });
 
-    // Test Quality Gate No-Result Route
     await page
-      .locator('#simulator-inline-root [data-sim-goto="scenario"]')
+      .getByRole('button', { name: 'Start my experience', exact: true })
       .click();
-    await page
-      .locator('#simulator-inline-root [data-sim-scenario="mixed-lighting"]')
-      .click();
-    await page
-      .locator('#simulator-inline-root [data-sim-action="trigger-no-result"]')
-      .click();
-    assert.ok(
-      (await page.locator('#simulator-inline-root').textContent()).includes(
-        'Quality Gate Active'
-      )
-    );
+    assert.equal(await page.locator('#kiosk-camera').isDisabled(), true);
 
-    // Test Fullscreen Kiosk Modal (<dialog>) & Screenshot 4
-    await page.locator('header [data-open-kiosk]').click();
-    assert.equal(
-      await page.locator('#kiosk-dialog').evaluate((d) => d.open),
-      true
-    );
-    await page.screenshot({
-      path: path.join(artifactDir, 'prototype_kiosk_modal.png')
+    await page
+      .getByRole('button', { name: 'Continue without camera', exact: true })
+      .click();
+
+    for (const id of ['tee', 'shirt', 'jeans', 'chinos']) {
+      await page
+        .locator(`input[name="kiosk-wardrobe"][value="${id}"]`)
+        .check();
+    }
+    await page.locator('#kiosk-style').selectOption('smart');
+    await page.locator('#kiosk-occasion').selectOption('work');
+    await page
+      .getByRole('button', { name: 'See my recommendation', exact: true })
+      .click();
+
+    assert.equal(await page.locator('.kiosk-product').count(), 4);
+    assert.equal(await page.locator('.kiosk-location').count(), 4);
+    await page.locator('#kiosk-ui').screenshot({
+      path: path.join(artifactDir, 'prototype_kiosk_result.png')
     });
-    await page.locator('#close-kiosk-dialog').click();
-    assert.equal(
-      await page.locator('#kiosk-dialog').evaluate((d) => d.open),
-      false
-    );
 
     // Mobile screenshot at 390px
     await page.setViewportSize({ width: 390, height: 844 });
@@ -240,14 +206,9 @@ const artifactDir =
     );
 
     report.interactiveFlow = {
-      hero3dSwitcher: 'PASS',
-      stageTabs: 'PASS',
-      rack3dCanvasAndPresets: 'PASS',
-      fixtureHotspots: 'PASS',
-      stitchShowcaseBezelTilt: 'PASS',
-      simulatorSteps: 'PASS',
-      noResultRoute: 'PASS',
-      kioskDialog: 'PASS'
+      chapter01PresentationAndStages: 'PASS',
+      chapter02Rack3dAndRenders: 'PASS',
+      chapter03IsolatedVisionKioskUi: 'PASS'
     };
 
     fs.writeFileSync(
@@ -255,7 +216,7 @@ const artifactDir =
       JSON.stringify(report, null, 2)
     );
     console.log(
-      'In-Store Prototype (TypeScript + CSS / Responsive / Axe WCAG A-AA / Offline / Simulator / Kiosk): PASS'
+      'In-Store Prototype (3 Chapters / Zara Editorial Motion / 3D Rack / Isolated Vision Kiosk / Axe WCAG A-AA): PASS'
     );
   } finally {
     await browser.close();

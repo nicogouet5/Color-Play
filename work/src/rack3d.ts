@@ -454,7 +454,7 @@ export function initRack3DViewer(
         strokeWidth: 2,
         depthBias: 0.35,
         label: {
-          text: '12" STITCH KIOSK UI',
+          text: '12" TOUCH KIOSK UI',
           color: '#b80a6b',
           fontSize: 10
         }
