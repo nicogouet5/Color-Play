@@ -7,7 +7,7 @@
 A computer-vision kiosk proposal for Ripley's physical stores: a color reference and clothing tastes guide a shopper toward garments; a proposed purchase-linked data loop helps Merchants learn about color × size × style. Ripley is the proposed buyer, **not a confirmed partner**.
 
 ## Try it
-Use demo RUT **11.111.111-1** and accept the local-demo consent.
+Start by choosing **“Quiero ver qué me podría quedar bien”** (first visit, left) or **“¿Qué hay de nuevo para mí?”** (returning, right). On phones the choices stack in the same order. Then use demo RUT **11.111.111-1** and accept the local-demo consent.
 
 - **First visit:** RUT → consent → local camera/image-color extraction or an explicitly sample color test → tastes and optional size → sample garment locations → printable ticket / genuine QR.
 - **Returning shopper:** RUT → saved demo palette, tastes, editable/hideable size and recent sample purchases → aisle recommendations. Available store by store in the demo.

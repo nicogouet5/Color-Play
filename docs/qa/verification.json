@@ -46,6 +46,10 @@
       "violations": []
     },
     {
+      "name": "first-visit-rut-form",
+      "violations": []
+    },
+    {
       "name": "color-test",
       "violations": []
     },
@@ -90,6 +94,7 @@
   "externalRequests": [],
   "failedRequests": [],
   "checks": [
+    "split visit chooser: left/right desktop, stacked mobile, keyboard entry/back and no RUT before choice",
     "RUT format/check digit, consent and gated navigation",
     "Mode1 sample color test, wardrobe validation and result",
     "Mode2 local profile and store enablement, no-profile recovery",
@@ -105,7 +110,7 @@
   "qrDecode": {
     "available": true,
     "values": [
-      "CP-ALC-84920:CPD-9B559FCB-718B-4022-81A7-3A5B8FBCE5B9"
+      "CP-ALC-84920:CPD-2167167A-21A2-4D0A-BC49-FEC59716C0DB"
     ]
   }
 }

@@ -25,7 +25,7 @@ See `CLEANUP_V2.json`. Finder initially could not trash an iCloud-backed item; t
 ## Verification
 - `npm --prefix work test`: TypeScript + production build + Playwright suite PASS.
 - Five viewport widths:1440 /1024 /768 /390 /320, no horizontal overflow or broken images.
--13 Axe scans across entry, image, taste, result, returning, ticket, checkout and Merchant states: zero automated violations detected.
+-14 Axe scans across the split visit chooser, RUT form, image, taste, result, returning, ticket, checkout and Merchant states: zero automated violations detected.
 - Real generated QR decoded by Chrome BarcodeDetector to the exact payload.
 - One-page A5 ticket PDF; print action called and print-only DOM checked.
 - Fake-camera device exercises capture and stopped tracks; local PNG upload/extraction and invalid MIME recovery checked. This is not physical-device calibration testing.
@@ -39,6 +39,10 @@ See `CLEANUP_V2.json`. Finder initially could not trash an iCloud-backed item; t
 Retained retail editorial world / supplied v2 palette and Manrope; no new direction deal or new decorative scene. Live thing: the actual two-mode kiosk, QR and mock checkout loop. Final nine inspector images were opened, plus desktop and mobile interaction captures. Removed inherited tiny tracked uppercase labels, removed the floating kiosk shadow and tightened the hardware-detail spacing.
 
 Conservative internal critique: design 6.5, usability 8, creativity 6.5, content 8; weighted overall7.1/10, not an academic grade or external review. Existing concept imagery is the realism cap; no authentic field footage or installation was fabricated. The combined showcase is still long on a phone and its reference photos do not show exact suggested colors; both limits are disclosed.
+
+## Entry-choice refinement
+
+The kiosk now begins with two equally sized, fully clickable panels: left “Quiero ver qué me podría quedar bien” for a first visit; right “¿Qué hay de nuevo para mí?” for returning shoppers. Both proceed to their existing RUT and consent form. Back returns to the chooser and restores focus. Reset / idle / tab-hide restores the chooser with no identifier field remaining. Desktop/tablet side-by-side and mobile stacked ordering were checked at1440/1024/768/390/320px, with keyboard selection and the complete downstream flow. Four entry screenshots were visually reviewed; the changed-target mechanical detector returned no findings. No retailer integrations or recommendation algorithm changes were added by this refinement.
 
 ## Still required for a real service
 Retailer / IT / Operations / legal authorization; backend and identity safeguards; real stock/location/POS/CRM contracts; actual loyalty enrollment; an approved controller/retention/rights policy; validated colorimetry and calibration; hardware quotes and printer support; a consented study and traceable iteration. None are implied completed by publishing this prototype.

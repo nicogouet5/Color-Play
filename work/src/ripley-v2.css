@@ -23,8 +23,16 @@
 .kiosk-heading { margin-bottom:28px; }
 .kiosk-heading h3 { max-width:32ch; }
 .kiosk-entry { display:flex; flex-direction:column; gap:20px; min-width:0; }
-.kiosk-mode-choice { display:flex; flex-wrap:wrap; gap:12px; }
-.kiosk-mode-choice [aria-pressed="true"] { background:var(--ripley-plum); color:white; }
+.kiosk-visit-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+.kiosk-screen .kiosk-visit-option { display:flex; flex-direction:column; align-items:flex-start; gap:24px; min-width:0; min-height:330px; padding:36px; border:0; border-radius:0; text-align:left; white-space:normal; font:inherit; transition:background-color 160ms ease; }
+.kiosk-screen .kiosk-visit-first { background:#a8115f; color:#fff; }
+.kiosk-screen .kiosk-visit-returning { background:#fcecf5; color:#54104c; }
+.kiosk-screen .kiosk-visit-first:hover { background:#88104e; }
+.kiosk-screen .kiosk-visit-returning:hover { background:#f6d6e9; }
+.kiosk-visit-title { display:block; max-width:22ch; font-size:clamp(24px,2.1vw,32px); line-height:1.2; font-weight:700; letter-spacing:-.025em; text-wrap:balance; }
+.kiosk-visit-description { display:block; max-width:34ch; font-size:16px; line-height:1.55; }
+.kiosk-visit-action { display:block; margin-top:auto; font-size:16px; font-weight:700; text-decoration:underline; text-underline-offset:5px; }
+.kiosk-visit-option:focus-visible { outline:3px solid var(--ink); outline-offset:4px; }
 .kiosk-entry input[type="text"],#checkout-token { width:100%; min-width:0; min-height:48px; border:1px solid #8e8293; background:white; border-radius:0; padding:12px; font:inherit; color:var(--ink); }
 :where(input,textarea):focus-visible { outline:3px solid var(--pink); outline-offset:3px; }
 .kiosk-consent { min-height:44px; align-items:start; line-height:1.5; }
@@ -82,8 +90,9 @@ figure.render-3d-card { margin:0; }
  .fastfind-result { grid-template-columns:1fr; }
  .fastfind-result > img { height:210px; grid-row:auto; object-position:center 40%; }
  .kiosk-ticket-demo { padding:20px; }
- .kiosk-mode-choice { flex-direction:column; }
- .kiosk-mode-choice button { width:100%; }
+ .kiosk-visit-options { grid-template-columns:1fr; gap:16px; }
+ .kiosk-screen .kiosk-visit-option { min-height:240px; padding:24px; gap:20px; }
+ .kiosk-visit-title { font-size:clamp(20px,5.7vw,24px); max-width:none; }
  .kiosk-top { flex-wrap:wrap; }
  .stage-tabs { flex-wrap:wrap; }
  .stage-panel h3 { font-size:24px; }

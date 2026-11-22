@@ -492,6 +492,7 @@ export function initVisionKioskApp(options: {
   let sessionOrdinal = 1;
   let authorized = false;
   let mode: 'first' | 'returning' = 'first';
+  let entryModeChosen = false;
   let identityKey = '';
   let authEpoch = 0;
   let imageConsent = false;
@@ -555,7 +556,7 @@ export function initVisionKioskApp(options: {
   }
 
   function move(next: number, focus = true): void {
-    if (next === 0) { authorized = false; identityKey = ''; document.querySelector('#print-ticket')?.remove(); }
+    if (next === 0) { authEpoch++; entryModeChosen = false; authorized = false; identityKey = ''; document.querySelector('#print-ticket')?.remove(); }
     if (next > 0 && !authorized) { say('Enter a RUT and give demo-session consent first.'); return; }
     if (next === 2 && !colorSource) { say('Complete the color-reference step or choose the sample test first.'); return; }
     if (next === 3 && !interviewDone) { say('Complete your clothing preferences first.'); return; }
@@ -582,6 +583,7 @@ export function initVisionKioskApp(options: {
     colorSource = null;
     captureQuality = '';
     mode = 'first';
+    entryModeChosen = false;
     selectedStore = 'santiago';
     puntosGo = false;
     profiles.clear();
@@ -637,15 +639,35 @@ export function initVisionKioskApp(options: {
 
   function welcome(): void {
     if (!screen) return;
-    screen.append(heading('Color clarity starts here.', 'First visit: RUT, consent, color test and tastes. Returning shopper: RUT to your saved demo profile. This public prototype has no Ripley CRM connection. Use a demo RUT, not a real identifier.'));
+    if (!entryModeChosen) {
+      screen.append(heading('¿Qué buscas hoy?', 'Elige cómo quieres comenzar.'));
+      const choices = make('div', 'kiosk-visit-options');
+      const visits = [
+        { value: 'first' as const, title: 'Quiero ver qué me podría quedar bien', description: 'Si es tu primera visita, descubre colores y prendas según tus gustos.', action: 'Es mi primera visita' },
+        { value: 'returning' as const, title: '¿Qué hay de nuevo para mí?', description: 'Si ya usaste Color-Play, vuelve a tus preferencias y explora nuevas sugerencias.', action: 'Ya he usado Color-Play' }
+      ];
+      visits.forEach(visit => {
+        const choice = button('', () => {
+          authEpoch++; mode = visit.value; entryModeChosen = true; render();
+          screen?.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+        }, 'kiosk-visit-option kiosk-visit-' + visit.value);
+        choice.id = 'kiosk-mode-' + visit.value;
+        const title = make('span', 'kiosk-visit-title', visit.title); title.id = choice.id + '-title';
+        const description = make('span', 'kiosk-visit-description', visit.description); description.id = choice.id + '-description';
+        choice.append(title, description, make('span', 'kiosk-visit-action', visit.action));
+        choices.append(choice);
+      });
+      screen.append(choices, make('p', 'kiosk-private-note', 'Prototipo de demostración. Ambas opciones continúan con RUT de prueba y consentimiento; no consultan sistemas de Ripley.'));
+      return;
+    }
+    screen.append(heading(mode === 'first' ? 'Your first visit starts here.' : 'Welcome back to Color-Play.', 'Use a demo RUT and consent to continue. This public prototype has no Ripley CRM connection. Do not enter a real identifier.'));
     const layout = make('div', 'kiosk-welcome');
     const form = make('form', 'kiosk-entry');
-    const modes = make('div', 'kiosk-mode-choice');
-    (['first', 'returning'] as const).forEach(value => {
-      const b = button(value === 'first' ? 'First visit · Mode 1' : 'Returning shopper · Mode 2', () => { authEpoch++; mode = value; render(); });
-      b.id = 'kiosk-mode-' + value; b.setAttribute('aria-pressed', String(mode === value)); modes.append(b);
-    });
-    form.append(modes);
+    form.dataset.visitMode = mode;
+    form.append(button('Volver a las opciones', () => {
+      authEpoch++; entryModeChosen = false; render();
+      document.getElementById('kiosk-mode-' + mode)?.focus({ preventScroll: true });
+    }));
     const storeLabel = make('label', 'kiosk-select-label', 'Demo store');
     const store = make('select'); store.id = 'kiosk-store';
     [['santiago', 'Santiago demo · returning mode enabled'], ['valparaiso', 'Valparaíso demo · first visit only']].forEach(([value, text]) => {
@@ -1511,7 +1533,7 @@ export function initVisionKioskApp(options: {
     document.querySelector('#print-ticket')?.remove();
     const previousFocus = document.activeElement?.id;
     screen.replaceChildren();
-    if (stepLabel) stepLabel.textContent = titles[stage];
+    if (stepLabel) stepLabel.textContent = stage === 0 && !entryModeChosen ? 'Inicio' : titles[stage];
     stepBtns.forEach((b) =>
       b.setAttribute(
         'aria-pressed',
