@@ -1,5 +1,7 @@
 node_modules/
 __pycache__/
 .DS_Store
-.stitch/
+dist/
+work/artifacts/
 .taste-skill/
+*.tsbuildinfo

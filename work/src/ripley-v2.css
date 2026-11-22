@@ -1,0 +1,99 @@
+/* Operate-mode extension. Supplied Ripley/Color-Play brand takes precedence over generic palette rules. */
+:root { --ink:#16121c; --pink:#a8115f; --accent:#a8115f; --ripley-plum:#741472; --ground:#f5f2f7; }
+.site-header { gap:24px; border:0; flex-wrap:wrap; }
+.kiosk-device { box-shadow:none; }
+.editorial-col > strong,.stage-spec-item h4,.hotspot-stage-col strong,.render-3d-card-body strong,.header-nav a,.btn-cta-link,.stage-tabs button,.hotspot-btn,.rack3d-btn,.site-footer { text-transform:none; letter-spacing:normal; font-size:14px; }
+.hotspot-detail-panel { justify-content:flex-start; gap:24px; }
+.hotspot-detail-header { border:0; padding-bottom:0; }
+.hotspot-stage-col { border:0; }
+.hotspot-stage-col p { font-size:14px; }
+.recipient { display:flex; align-items:center; gap:12px; margin-left:auto; font-size:14px; }
+.recipient img { width:100px; height:auto; }
+.header-nav { flex-wrap:wrap; }
+.hero-visual { margin:0; min-width:0; align-self:start; }
+.hero-visual img { display:block; width:100%; height:470px; object-fit:cover; }
+.hero-visual figcaption { font-size:14px; line-height:1.5; margin-top:12px; }
+.hero-copy h1 { font-weight:650; text-transform:none; letter-spacing:-.035em; }
+.hero-principles { margin-top:32px; }
+.stage-architecture { margin-top:64px; }
+.stage-architecture > p { margin:16px 0 24px; max-width:75ch; }
+.stage-headline-box > p { margin-top:16px; }
+.stage-panel h3 { max-width:32ch; }
+.editorial-kicker,.tag { display:none; }
+.kiosk-heading { margin-bottom:28px; }
+.kiosk-heading h3 { max-width:32ch; }
+.kiosk-entry { display:flex; flex-direction:column; gap:20px; min-width:0; }
+.kiosk-mode-choice { display:flex; flex-wrap:wrap; gap:12px; }
+.kiosk-mode-choice [aria-pressed="true"] { background:var(--ripley-plum); color:white; }
+.kiosk-entry input[type="text"],#checkout-token { width:100%; min-width:0; min-height:48px; border:1px solid #8e8293; background:white; border-radius:0; padding:12px; font:inherit; color:var(--ink); }
+:where(input,textarea):focus-visible { outline:3px solid var(--pink); outline-offset:3px; }
+.kiosk-consent { min-height:44px; align-items:start; line-height:1.5; }
+.kiosk-consent input { margin-top:6px; min-width:20px; width:20px; height:20px; accent-color:var(--ripley-plum); }
+.kiosk-screen :where(button,select,summary) { min-height:44px; }
+.kiosk-screen select { max-width:100%; }
+.kiosk-size-control { display:flex; flex-direction:column; gap:12px; align-items:start; }
+.kiosk-size-control label { width:100%; }
+.kiosk-exclusions label { display:flex; gap:8px; min-height:44px; align-items:center; }
+.kiosk-exclusions input { accent-color:var(--pink); min-width:20px; height:20px; }
+.fastfind-controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; margin-bottom:28px; }
+.fastfind-results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+.fastfind-result { min-width:0; }
+.fastfind-result > img { width:100%; height:200px; object-fit:cover; display:block; margin-bottom:16px; }
+.fastfind-result > :where(p,small) { margin-top:10px; display:block; }
+.fastfind-result h4 { font-size:20px; line-height:1.3; text-transform:none; }
+.kiosk-private-note { font-size:14px; line-height:1.6; margin-top:20px; color:var(--ink); max-width:75ch; }
+.kiosk-ticket-demo { background:#f5f2f7; padding:28px; margin:24px 0; max-width:720px; overflow-wrap:anywhere; }
+.kiosk-ticket-demo h3 { font-size:28px; text-transform:none; }
+.kiosk-ticket-demo > * + * { margin-top:16px; }
+.ticket-qr { display:block; width:180px; height:180px; }
+.ticket-token { font-variant-numeric:tabular-nums; font-size:14px; }
+.checkout-items { margin:24px 0; padding:20px; border:1px solid #8e8293; }
+.checkout-items legend { font-weight:700; padding:0 8px; }
+.checkout-items > label + label { margin-top:12px; }
+.checkout-summary { font-size:20px; font-weight:650; margin-bottom:24px; }
+.merchant-preview { display:flex; flex-direction:column; gap:24px; }
+.merchant-demo-row { padding:24px; background:#f5f2f7; }
+.merchant-demo-row h4 { font-size:16px; text-transform:none; }
+.merchant-demo-row > * + * { margin-top:12px; }
+.kiosk-actions { flex-wrap:wrap; }
+.kiosk-product-info :where(p,small) { font-size:14px; }
+.kiosk-screen :where(small,.review-disclaimer) { font-size:14px; }
+#print-ticket { display:none; }
+.site-footer { gap:24px; flex-wrap:wrap; }
+figure.render-3d-card { margin:0; }
+@media (max-width:900px) {
+ .hero-visual img { height:340px; }
+ .fastfind-controls,.fastfind-results { grid-template-columns:1fr; }
+ .fastfind-result { display:grid; grid-template-columns:140px 1fr; gap:8px 20px; }
+ .fastfind-result > img { grid-row:span 4; height:180px; margin:0; }
+ .stage-architecture { margin-top:40px; }
+ .recipient { margin-left:0; }
+}
+@media (max-width:600px) {
+ .site-header { gap:16px; }
+ .header-nav { order:3; width:100%; justify-content:space-between; gap:12px; }
+ .recipient { margin-left:auto; gap:8px; font-size:12px; }
+ .recipient img { width:78px; }
+ .hero-visual img { height:260px; }
+ .hero-copy h1 { font-size:38px; }
+ .kiosk-heading h3 { font-size:25px; line-height:1.18; }
+ .kiosk-screen { padding:24px 16px; }
+ .kiosk-welcome-photos { display:none; }
+ .fastfind-result { grid-template-columns:1fr; }
+ .fastfind-result > img { height:210px; grid-row:auto; object-position:center 40%; }
+ .kiosk-ticket-demo { padding:20px; }
+ .kiosk-mode-choice { flex-direction:column; }
+ .kiosk-mode-choice button { width:100%; }
+ .kiosk-top { flex-wrap:wrap; }
+ .stage-tabs { flex-wrap:wrap; }
+ .stage-panel h3 { font-size:24px; }
+}
+@media print {
+ @page { size:A5; margin:12mm; }
+ body > *:not(#print-ticket) { display:none !important; }
+ #print-ticket { display:block !important; background:white; padding:0; margin:0; max-width:none; font:12pt/1.4 Manrope,sans-serif; color:#000; }
+ #print-ticket .ticket-qr { width:40mm; height:40mm; break-inside:avoid; }
+ #print-ticket > * + * { margin-top:3mm; }
+ #print-ticket h3 { font-size:18pt; }
+ #print-ticket .ticket-token { font-size:9pt; }
+}

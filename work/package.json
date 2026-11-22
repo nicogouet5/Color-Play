@@ -1,12 +1,11 @@
 {
   "private": true,
-  "name": "color-play-presentation-tools",
+  "name": "color-play-ripley-prototype",
   "scripts": {
-    "check": "node check_rubric_v12.cjs",
-    "audit": "node audit_v12.cjs",
-    "build": "node render_rubric_v12.cjs && python3 assemble_rubric_v12.py",
     "typecheck": "tsc --noEmit",
+    "build": "node build_prototype.mjs",
     "build:prototype": "node build_prototype.mjs",
+    "test": "npm run typecheck && npm run build:prototype && npm run check:prototype",
     "check:prototype": "node check_instore_prototype.cjs"
   },
   "devDependencies": {

@@ -1,0 +1,111 @@
+{
+  "passed": true,
+  "viewports": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "sections": 3,
+      "brokenImages": 0
+    },
+    {
+      "width": 1024,
+      "scrollWidth": 1024,
+      "sections": 3,
+      "brokenImages": 0
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "sections": 3,
+      "brokenImages": 0
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "sections": 3,
+      "brokenImages": 0
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "sections": 3,
+      "brokenImages": 0
+    }
+  ],
+  "axe": [
+    {
+      "name": "entry-1440",
+      "violations": []
+    },
+    {
+      "name": "entry-768",
+      "violations": []
+    },
+    {
+      "name": "entry-390",
+      "violations": []
+    },
+    {
+      "name": "color-test",
+      "violations": []
+    },
+    {
+      "name": "taste",
+      "violations": []
+    },
+    {
+      "name": "result",
+      "violations": []
+    },
+    {
+      "name": "ticket",
+      "violations": []
+    },
+    {
+      "name": "checkout",
+      "violations": []
+    },
+    {
+      "name": "merchant-loop",
+      "violations": []
+    },
+    {
+      "name": "returning",
+      "violations": []
+    },
+    {
+      "name": "local-image-extraction",
+      "violations": []
+    },
+    {
+      "name": "returning-390",
+      "violations": []
+    },
+    {
+      "name": "returning-768",
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "failedRequests": [],
+  "checks": [
+    "RUT format/check digit, consent and gated navigation",
+    "Mode1 sample color test, wardrobe validation and result",
+    "Mode2 local profile and store enablement, no-profile recovery",
+    "editable/hideable size, no sample stock exit",
+    "real QR and print-only ticket",
+    "checkout token rejection and one-time local receipt",
+    "3/5/8 non-additive tiers and separate optional loyalty preview",
+    "local Merchant loop without RUT exposure",
+    "camera consent, fake-camera capture and stopped tracks; real local-image extraction",
+    "reset/visibility/3-minute idle cleanup, zero persistent storage",
+    "responsive overflow, 200% text, keyboard tabs, 3D controls, no-JS fallback"
+  ],
+  "qrDecode": {
+    "available": true,
+    "values": [
+      "CP-ALC-84920:CPD-9B559FCB-718B-4022-81A7-3A5B8FBCE5B9"
+    ]
+  }
+}

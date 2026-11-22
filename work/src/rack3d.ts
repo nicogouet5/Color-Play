@@ -82,7 +82,7 @@ const HOTSPOT_PINS: HotspotPin3D[] = [
   {
     id: 'touch-terminal',
     code: '03',
-    label: '12" Touch Kiosk Console',
+    label: 'Camera and touch kiosk concept',
     pos: { x: -0.44, y: 0.36, z: 0.28 },
     cameraTarget: { yaw: 0.38, pitch: 0.22, zoom: 1.2 }
   },
@@ -96,7 +96,7 @@ const HOTSPOT_PINS: HotspotPin3D[] = [
   {
     id: 'qr-handoff',
     code: '05',
-    label: 'Ephemeral Hook Pass (Zero CRM)',
+    label: 'Ticket / QR to checkout demo',
     pos: { x: -0.42, y: -0.62, z: 0.26 },
     cameraTarget: { yaw: 0.34, pitch: 0.14, zoom: 1.15 }
   }
@@ -454,12 +454,15 @@ export function initRack3DViewer(
         strokeWidth: 2,
         depthBias: 0.35,
         label: {
-          text: '12" TOUCH KIOSK UI',
+          text: 'CV KIOSK CONCEPT',
           color: '#b80a6b',
           fontSize: 10
         }
       };
       faces.push(screenFace);
+      // Proposed camera module; geometry is illustrative, not a hardware specification.
+      faces.push(...createBoxFaces(-0.78, 0.48, 0.24, 0.15, 0.08, 0.06, '#201b27', '#741472', 0.3));
+      faces.push(...createBoxFaces(-0.78, 0.48, 0.28, 0.035, 0.035, 0.015, '#547488', undefined, 0.4));
 
       // 02 · Physical Fabric Comparison Drapes (4 Tactile Swatches below Screen)
       const drapeColors = ['#b80a6b', '#d999be', '#b84a27', '#4a5d3f'];
@@ -485,7 +488,7 @@ export function initRack3DViewer(
         );
       });
 
-      // 05 · Ephemeral Hook Pass Dispenser Slot (Zero CRM)
+      // 05 · Proposed ticket / QR printer slot (POS/CRM are not connected here)
       faces.push(
         ...createBoxFaces(
           -0.78,
@@ -615,8 +618,8 @@ export function initRack3DViewer(
       );
     });
 
-    // 6. Stage 3 Optional Makeup Champion Bridge Totem [A]
-    if (stage === 'stage3-makeup-champion') {
+    // 6. Optional rollout signage in the concept model
+    if (stage === 'stage3-rollout') {
       faces.push(
         ...createBoxFaces(
           halfFrame + 0.34,
@@ -771,7 +774,7 @@ export function initRack3DViewer(
     ctx.fillText(
       stage === 'stage1-portable'
         ? '0.8 m² Portable Rack Bay · Zero Fixed Wiring [A]'
-        : '1.2 m² Modular Rack-Kiosk Bay · 115 cm ADA Console Height [A]',
+        : '1.2 m² concept bay · 115 cm console height [A]',
       dimMidX,
       dimMidY
     );

@@ -3,7 +3,7 @@ export type EvidenceStatus = 'O' | 'A';
 export type DeploymentStageId =
   | 'stage1-portable'
   | 'stage2-station'
-  | 'stage3-makeup-champion';
+  | 'stage3-rollout';
 
 export type FixtureHotspotId =
   | 'lighting-bar'

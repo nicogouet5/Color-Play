@@ -1,38 +1,38 @@
-# Color-Play
+# Color-Play × Ripley
 <!-- impeccable:product-schema: 1 -->
 
 ## Platform
 web
 
 ## Stack
-Self-contained HTML/CSS/JavaScript presentation, exported to a landscape PDF. No framework or runtime dependency for viewing.
+TypeScript and CSS, bundled with existing esbuild into self-contained HTML. No browser runtime framework or backend. GitHub Pages serves only the generated dist directory.
 
 ## Purpose
-Explain a bounded B2B2C color-guidance experiment for Chilean fashion retailers, with traceable decisions, honest evidence and a staged research plan.
+Prototype the revised computer-vision kiosk journey: RUT-first consent, color test, tastes, garment wayfinding and a ticket/QR linking proposed checkout and Merchant learning.
 
 ## Audience
-Product Management course reviewers and prospective retail stakeholders. Shoppers benefit from the service; apparel Merchandising/Buying is the proposed buyer; Makeup/Beauty is the proposed champion.
+Shopper-facing kiosk demo and retail stakeholder review. Ripley Merchants is proposed economic buyer; Operations, IT/Data, CRM/Puntos Go, Finance and Legal/Privacy are stakeholders, not confirmed partners.
 
-## What Makes It This Thing
-Optional, human-explained color guidance connected to available garments at the rack, with a safe rejection/no-result route, rather than an appearance verdict or a generic styling app.
-
-## Operating Context
-The current rubric-aligned v12 dossier has 20 main slides and six appendices in HTML. The PDF adds nine current rationale pages and 22 unchanged historical source/feedback pages, 57 total. The eight deliverables are WHO/value proposition, competitive landscape, strategic positioning, channel management, customer analysis, business plan, BBBB, and an updated one-page business plan plus assumption log. Integration is supporting material, not a numbered deliverable. The final HTML is the current source; rebuilding uses its content and the historical tail of the existing final PDF, without v11.
+## Product truth
+The supplied ColorPlay_x_Ripley.zip strategy wins over the earlier Merchant-focus draft. Mode1 starts with RUT and consent, not anonymous entry. Mode2 is part of the store-by-store product proposal, not merely a Phase3 bridge. Sell the system/IP, then embed the team; no SaaS station pricing.
 
 ## Capabilities and Constraints
-Preserve English presentation copy, Spanish survey quotes, source provenance, numerical assumptions, survey findings and evidence labels. No new research is conducted by this redesign. Buyer, champion, decision authority and cross-category makeup applicability remain hypotheses [A], to be checked with each retailer. Preserve original attached artifacts verbatim, even when they describe an older DMU.
+Functional local RUT validation, camera/upload color extraction, tastes and exclusions, size editing/hiding, sample stock/locations, genuine offline QR and print ticket. Local mock checkout joins one ticket to purchased versus unpurchased recommendations and a Merchant preview. No real identifiers should be used. No network data integration, persistent profile, actual loyalty sign-up, live stock, retailer approval or validated skin analysis exists.
 
 ## Brand Commitments
-User requests a visual rebuild using Impeccable and Apple Design while retaining the essence. Preserve the existing Simple Tech attribution, the supplied Color logo, fuchsia, fashion imagery and retail color-guidance positioning. The Color and existing marks form a compact header lockup on desktop; on mobile, only the supplied Color logo remains. The prior typographic Color—Play header wordmark is intentionally removed. Apple guidance informs hierarchy, legibility and interaction; this is a web document, not a native Apple app.
+Keep supplied Color-Play and Simple Tech/UDD marks, Ripley recipient mark unchanged, Manrope and the existing fashion/fixture imagery. Plum for recipient context; magenta/pink for Color-Play action. English UI retained; retail terms RUT, caja and Puntos Go remain explicit.
 
-## Evidence on Hand
-The final v12 HTML and PDF, including their embedded historical source materials and feedback. Survey findings are existing self-report [O], not newly verified research. No retailer evidence, confirmed partnership or makeup validation is available.
+## Operating Context
+Public demo, not a production customer service. Use 11.111.111-1. RUT is not authentication. Additional backend, identity safeguards, approved privacy policy, calibration and data contracts are required for a real store pilot.
 
 ## Product Principles
-- Shopper agency before automation or data accumulation.
-- Evidence and assumptions must remain visibly distinct.
-- Apparel is the first commercial scope; makeup is a potential cross-category expansion, not a change of core product.
-- Commercial ownership, advocacy, approval, use and veto power must not be conflated.
+- Separate core demo consent, camera/image consent and optional loyalty preview.
+- Never send/store a RUT or image persistently or place it in the QR.
+- Clear session on finish/reset, tab hide, reload and3 minutes without input.
+- No-result, missing-profile, unavailable-store and no-stock exits are first-class.
+- Proposed3/5/8% tiers are non-additive working values, not redeemable benefits.
+- No inferred reason or causal claim for an unpurchased recommendation.
+- Survey, projections, IP transfer and retailer roles remain unvalidated where the source says so.
 
 ## Accessibility & Inclusion
-Keyboard navigation, visible focus, touch-sized controls, reduced-motion support, responsive reading and accessible text contrast. Preserve content at enlarged text sizes rather than clipping.
+Visible focus, labeled fields,44px controls, keyboard operation, reduced motion, responsive layout and no horizontal overflow including200% text checks.

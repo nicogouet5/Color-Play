@@ -1,4 +1,5 @@
 import type { ScenarioId } from './types';
+import { ticketQr } from './ticket-qr';
 
 declare const VISION_ASSETS: Record<string, string>;
 
@@ -26,6 +27,7 @@ export interface VisionProfile {
   climate: 'warm' | 'mild' | 'cold';
   comfort: 'neutral' | 'balanced' | 'bold';
   avoid: string[];
+  avoidColors: string[];
 }
 
 export interface VisionLookItem {
@@ -260,6 +262,9 @@ function validateVisionProfile(p: VisionProfile): string {
   ) {
     return "We need at least one top and one bottom that you haven't excluded. Review your usual garments or what you prefer to avoid.";
   }
+  if (!VISION_FABRIC_COLORS.some(c => c.neutral && !p.avoidColors.includes(c.name))) {
+    return 'Keep at least one neutral color available, or finish without a recommendation.';
+  }
   return '';
 }
 
@@ -293,10 +298,10 @@ function pickColorFor(
   kind: VisionGarment['kind']
 ): VisionColor {
   const pool = VISION_FABRIC_COLORS.filter((c) =>
-    p.comfort === 'neutral' ||
-    (['bottom', 'shoes', 'layer'].includes(kind) && p.comfort !== 'bold')
-      ? c.neutral
-      : true
+    !p.avoidColors.includes(c.name) &&
+    ((p.comfort === 'neutral' ||
+    (['bottom', 'shoes', 'layer'].includes(kind) && p.comfort !== 'bold'))
+      ? c.neutral : true)
   );
   if (kind !== 'top') {
     const preferred =
@@ -445,14 +450,18 @@ export function initVisionKioskApp(options: {
     document.querySelectorAll<HTMLButtonElement>('[data-screen]')
   );
 
-  const titles = ['Welcome', 'Your photo', 'Your clothes', 'Your result'];
+  const titles = [
+    'RUT & consent', 'Color test', 'Your clothes', 'Your Mode 1 result',
+    'Welcome back', 'Ticket / QR', 'Checkout demo', 'Merchant data loop'
+  ];
   const initialProfile = (): VisionProfile => ({
     style: 'casual',
     wardrobe: [],
     occasion: 'daily',
     climate: 'mild',
     comfort: 'balanced',
-    avoid: []
+    avoid: [],
+    avoidColors: []
   });
   const demoProfile = (): VisionProfile => ({
     ...initialProfile(),
@@ -476,6 +485,36 @@ export function initVisionKioskApp(options: {
   let uploadEpoch = 0;
   let lookIndex = 0;
   let samplePoint = { x: 0.5, y: 0.5 };
+  let fastFindColor = 'Cool palette';
+  let fastFindTaste = 'Relaxed poplin and knit';
+  let fastFindSize = 'M';
+  let fastFindSizeVisible = true;
+  let sessionOrdinal = 1;
+  let authorized = false;
+  let mode: 'first' | 'returning' = 'first';
+  let identityKey = '';
+  let authEpoch = 0;
+  let imageConsent = false;
+  let colorSource: 'sample' | 'local-image' | null = null;
+  let captureQuality = '';
+  let selectedStore = 'santiago';
+  let puntosGo = false;
+  let idleTimer: ReturnType<typeof setTimeout> | undefined;
+  const identitySalt = crypto.getRandomValues(new Uint8Array(16)).join('-');
+  type SavedProfile = { profile: VisionProfile; reference: [number, number, number]; size: string; color: string; taste: string; recentPurchases: string[] };
+  const profiles = new Map<string, SavedProfile>();
+  type TicketRow = { sku: string; garmentId: string; title: string; color: string; floor: string; sizes: string[] };
+  type DemoTicket = { id: string; payload: string; rows: TicketRow[]; used: boolean; mode: string; tier: number; purchased: string[]; loyalty: boolean };
+  let activeTicket: DemoTicket | null = null;
+  let recommendationRows: TicketRow[] = [];
+  let purchasedSkus = new Set<string>();
+  const receipts: { ticketId: string; mode: string; colors: string[]; style: string; size: string; bought: string[]; declined: string[]; tier: number; loyalty: boolean }[] = [];
+
+  const campaignCode = 'CP-ALC-84920';
+
+  function demoSessionId(): string {
+    return `DEMO-S${String(sessionOrdinal).padStart(3, '0')}`;
+  }
 
   function make<K extends keyof HTMLElementTagNameMap>(
     tag: K,
@@ -516,16 +555,42 @@ export function initVisionKioskApp(options: {
   }
 
   function move(next: number, focus = true): void {
+    if (next === 0) { authorized = false; identityKey = ''; document.querySelector('#print-ticket')?.remove(); }
+    if (next > 0 && !authorized) { say('Enter a RUT and give demo-session consent first.'); return; }
+    if (next === 2 && !colorSource) { say('Complete the color-reference step or choose the sample test first.'); return; }
+    if (next === 3 && !interviewDone) { say('Complete your clothing preferences first.'); return; }
+    if (next === 4 && mode !== 'returning') { say('Choose returning shopper and look up a demo profile first.'); return; }
+    if (next >= 5 && !activeTicket) { say('Generate a ticket from your recommendations first.'); return; }
+    if (next === 7 && !activeTicket?.used) { say('Complete the simulated checkout first.'); return; }
+    if (next === 2) { activeTicket = null; interviewDone = false; }
+    if (next !== 1 && capture) { capture.width = 1; capture.height = 1; capture = null; colors = []; }
     stopCamera();
     uploadEpoch++;
     stage = next;
     render();
     if (focus) {
       screen?.querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+      screen?.scrollIntoView({ block: 'start', behavior: 'instant' });
     }
   }
 
   function reset(): void {
+    authEpoch++;
+    authorized = false;
+    identityKey = '';
+    imageConsent = false;
+    colorSource = null;
+    captureQuality = '';
+    mode = 'first';
+    selectedStore = 'santiago';
+    puntosGo = false;
+    profiles.clear();
+    receipts.length = 0;
+    activeTicket = null;
+    recommendationRows = [];
+    purchasedSkus.clear();
+    document.querySelector('#print-ticket')?.remove();
+    clearTimeout(idleTimer);
     stopCamera();
     uploadEpoch++;
     if (capture) {
@@ -538,6 +603,11 @@ export function initVisionKioskApp(options: {
     profile = initialProfile();
     interviewDone = false;
     lookIndex = 0;
+    fastFindColor = 'Cool palette';
+    fastFindTaste = 'Relaxed poplin and knit';
+    fastFindSize = '';
+    fastFindSizeVisible = true;
+    sessionOrdinal++;
     stage = 0;
     render();
   }
@@ -560,49 +630,80 @@ export function initVisionKioskApp(options: {
     return button('Finish and clear', () => {
       reset();
       say(
-        'Walkthrough finished. Photo, answers and results from the kiosk view cleared.'
+        'Session finished. Identifier link, photo, profiles, preferences, tickets and checkout records cleared from this page.'
       );
     });
   }
 
   function welcome(): void {
     if (!screen) return;
-    const hero = make('div', 'kiosk-welcome');
-    const copy = make('div', 'kiosk-welcome-copy');
-    copy.append(
-      heading(
-        'Find your next favorite.',
-        'An optional photo, what you like to wear and a look to explore in this store.'
-      )
-    );
-    const list = make('ol', 'kiosk-promise');
-    [
-      'You choose whether to use the camera.',
-      'You tell us which garments you like.',
-      'We show you clothes and where to find them.'
-    ].forEach((text) => list.append(make('li', '', text)));
-    copy.append(list);
-    copy.append(
-      button('Start my experience', () => move(1), 'primary kiosk-primary'),
-      make(
-        'p',
-        'kiosk-private-note',
-        'No account and no photo stored. You can continue without a camera.'
-      )
-    );
+    screen.append(heading('Color clarity starts here.', 'First visit: RUT, consent, color test and tastes. Returning shopper: RUT to your saved demo profile. This public prototype has no Ripley CRM connection. Use a demo RUT, not a real identifier.'));
+    const layout = make('div', 'kiosk-welcome');
+    const form = make('form', 'kiosk-entry');
+    const modes = make('div', 'kiosk-mode-choice');
+    (['first', 'returning'] as const).forEach(value => {
+      const b = button(value === 'first' ? 'First visit · Mode 1' : 'Returning shopper · Mode 2', () => { authEpoch++; mode = value; render(); });
+      b.id = 'kiosk-mode-' + value; b.setAttribute('aria-pressed', String(mode === value)); modes.append(b);
+    });
+    form.append(modes);
+    const storeLabel = make('label', 'kiosk-select-label', 'Demo store');
+    const store = make('select'); store.id = 'kiosk-store';
+    [['santiago', 'Santiago demo · returning mode enabled'], ['valparaiso', 'Valparaíso demo · first visit only']].forEach(([value, text]) => {
+      const option = make('option', '', text); option.value = value; option.selected = selectedStore === value; store.append(option);
+    });
+    store.onchange = () => { selectedStore = store.value; };
+    storeLabel.append(store); form.append(storeLabel);
+    const rutLabel = make('label', 'kiosk-select-label', 'RUT');
+    const rut = make('input'); rut.id = 'kiosk-rut'; rut.type = 'text'; rut.autocomplete = 'off'; rut.spellcheck = false; rut.maxLength = 12; rut.placeholder = '11.111.111-1'; rut.setAttribute('aria-describedby', 'rut-help rut-error');
+    rutLabel.append(rut); form.append(rutLabel, make('p', 'kiosk-private-note', 'Use 11.111.111-1 for the saved sample profile. Any entered identifier is processed only in this page, never sent or persistently stored.'));
+    form.lastElementChild!.id = 'rut-help';
+    form.append(button('Use demo RUT', () => { rut.value = '11.111.111-1'; rut.focus(); }));
+    const consent = make('label', 'kiosk-consent');
+    const check = make('input'); check.type = 'checkbox'; check.id = 'kiosk-session-consent';
+    consent.append(check, document.createTextNode('I consent to this local demo linking my color and taste choices to a temporary identifier, and to simulated checkout / CRM previews. Nothing is sent to Ripley. I can finish and erase the session at any time.'));
+    form.append(consent);
+    const privacy = make('a', '', 'Read demo privacy and retention'); privacy.href = 'privacy.html'; privacy.target = '_blank'; privacy.rel = 'noopener'; form.append(privacy);
+    const error = make('p', 'quiz-error'); error.id = 'rut-error'; error.setAttribute('role', 'alert'); form.append(error);
+    const submit = make('button', 'primary', mode === 'first' ? 'Start my color test' : 'Find my saved demo profile'); submit.type = 'submit'; form.append(submit);
+    form.onsubmit = async e => {
+      e.preventDefault();
+      const entered = rut.value.trim().replaceAll('.', '').replaceAll('-', '').toUpperCase();
+      if (!/^[1-9][0-9]{6,7}[0-9K]$/.test(entered)) { error.textContent = 'Enter a RUT with 7–8 digits and a check digit, for example 11.111.111-1.'; rut.setAttribute('aria-invalid', 'true'); return; }
+      let sum = 0, factor = 2;
+      for (const digit of entered.slice(0, -1).split('').reverse()) { sum += Number(digit) * factor; factor = factor === 7 ? 2 : factor + 1; }
+      const checkValue = 11 - sum % 11;
+      const expected = checkValue === 11 ? '0' : checkValue === 10 ? 'K' : String(checkValue);
+      if (entered.at(-1) !== expected) { error.textContent = 'The RUT check digit does not match. Use the demo RUT or correct the number.'; rut.setAttribute('aria-invalid', 'true'); return; }
+      if (!check.checked) { error.textContent = 'Give demo-session consent to continue, or leave without starting.'; check.focus(); return; }
+      if (mode === 'returning' && selectedStore !== 'santiago') { error.textContent = 'Returning mode is not enabled at this sample store. Choose Santiago demo or start a first visit.'; return; }
+      const version = ++authEpoch; submit.disabled = true; error.textContent = 'Preparing your local demo…';
+      try {
+        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(identitySalt + entered));
+        if (version !== authEpoch) return;
+        const key = Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, '0')).join('');
+        const saved = profiles.get(key) ?? (entered === '111111111' ? {
+          profile: demoProfile(), reference: [184, 10, 107] as [number, number, number], size: 'M',
+          color: 'Cool sample palette', taste: 'casual', recentPurchases: ['DEMO-SHIRT', 'DEMO-JEANS']
+        } : null);
+        if (mode === 'returning' && !saved) { error.textContent = 'No local demo profile is available. Use 11.111.111-1 or complete a first visit in this tab. This is not a Ripley customer lookup.'; return; }
+        stopCamera(); uploadEpoch++; if (capture) { capture.width = 1; capture.height = 1; } capture = null; colors = [];
+        authorized = true; identityKey = key; imageConsent = false; colorSource = null; captureQuality = '';
+        activeTicket = null; recommendationRows = []; purchasedSkus.clear(); puntosGo = false; lookIndex = 0; fastFindSizeVisible = true;
+        document.querySelector('#print-ticket')?.remove(); rut.value = '';
+        if (mode === 'returning' && saved) {
+          profile = structuredClone(saved.profile); reference = [...saved.reference]; fastFindSize = saved.size;
+          fastFindColor = saved.color; fastFindTaste = saved.taste; colorSource = 'sample'; interviewDone = true;
+          profiles.set(key, structuredClone(saved)); move(4);
+        } else {
+          profile = initialProfile(); reference = null; fastFindSize = ''; interviewDone = false; move(1);
+        }
+        armIdle(); say('Demo session ready. No identifier was sent or saved to persistent storage.');
+      } catch { if (version === authEpoch) error.textContent = 'This demo needs HTTPS or localhost for a private session token. Please reopen the secure site.'; }
+      finally { if (submit.isConnected) submit.disabled = false; }
+    };
     const visuals = make('div', 'kiosk-welcome-photos');
-    visuals.append(
-      createClothingImg('shirt', {
-        alt: 'Shirts as a clothing reference',
-        eager: true
-      }),
-      createClothingImg('chinos', {
-        alt: 'Reference for pants and sneakers',
-        eager: true
-      })
-    );
-    hero.append(copy, visuals);
-    screen.append(hero);
+    visuals.append(createClothingImg('shirt', { alt: 'Sample shirt reference', eager: true }), createClothingImg('chinos', { alt: 'Sample trousers reference', eager: true }));
+    layout.append(form, visuals); screen.append(layout, endButton());
   }
 
   function renderReference(): void {
@@ -610,7 +711,7 @@ export function initVisionKioskApp(options: {
     if (status) {
       status.textContent = reference
         ? `Confirmed reference: ${hexFromRgb(reference)}`
-        : 'No confirmed reference. You can also continue with just your tastes.';
+        : 'No confirmed reference. Select a color, use the sample test, or leave without a result.';
     }
     document
       .querySelectorAll<HTMLElement>('.kiosk-color')
@@ -658,7 +759,7 @@ export function initVisionKioskApp(options: {
     ];
     renderReference();
     say(
-      `Chosen reference: ${hexFromRgb(reference)}. It will be used to match colors, without classifying your appearance.`
+      `Chosen reference: ${hexFromRgb(reference)}. Local color extraction only, not a validated skin-tone diagnosis.`
     );
   }
 
@@ -693,6 +794,8 @@ export function initVisionKioskApp(options: {
       capture.height = 1;
     }
     capture = next;
+    captureQuality = analyzed.meanLight < 8 || analyzed.meanLight > 96 || analyzed.clipped > 0.65
+      ? 'Lighting is too dark or overexposed. Retake the image, use the sample test, or leave without a result.' : '';
     colors = analyzed.colors;
     reference = null;
     samplePoint = { x: 0.5, y: 0.5 };
@@ -761,7 +864,7 @@ export function initVisionKioskApp(options: {
   }
 
   async function loadPhoto(file?: File): Promise<void> {
-    if (!file) return;
+    if (!file || !imageConsent || !authorized) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       say('Choose a JPG, PNG or WebP photo.');
       return;
@@ -792,8 +895,8 @@ export function initVisionKioskApp(options: {
     if (!screen) return;
     screen.append(
       heading(
-        capture ? 'Choose a color from your photo.' : 'A photo, if you want.',
-        "The photo is processed here, during your session. We don't identify your face or automatically determine your skin tone."
+        capture ? 'Choose your color reference.' : 'Your color test, in this browser.',
+        'The proposed kiosk uses computer vision under 5000K CRI 95+ light. This browser extracts image colors locally; it cannot verify calibration or deliver validated skin colorimetry. No photo is uploaded or saved.'
       )
     );
     const layout = make('div', 'kiosk-photo-layout');
@@ -854,7 +957,7 @@ export function initVisionKioskApp(options: {
         '',
         capture
           ? 'Tap an area of the photo or one of the swatches. Colors include the background and your clothes.'
-          : "Find natural light, no filters, and avoid strong shadows. You don't need to pose in any special way."
+          : 'Use even front lighting and no filters. Use the sample test if you do not want to use your camera. Store light calibration is a pilot requirement, not a browser measurement.'
       )
     );
     if (capture) {
@@ -889,10 +992,11 @@ export function initVisionKioskApp(options: {
     const check = document.createElement('input');
     check.type = 'checkbox';
     check.id = 'kiosk-consent';
+    check.checked = imageConsent;
     consent.append(
       check,
       document.createTextNode(
-        'I allow the camera to be turned on for this session.'
+        'I allow local image-color processing for this session. Camera access is requested separately by my browser.'
       )
     );
     side.append(consent);
@@ -904,9 +1008,17 @@ export function initVisionKioskApp(options: {
       'primary'
     );
     start.id = 'kiosk-camera';
-    start.disabled = true;
+    start.disabled = !imageConsent;
     check.onchange = () => {
+      imageConsent = check.checked;
       start.disabled = !check.checked;
+      uploadButton.disabled = !check.checked;
+      if (!check.checked) {
+        uploadEpoch++; stopCamera();
+        if (capture) { capture.width = 1; capture.height = 1; }
+        capture = null; colors = []; reference = null; colorSource = null; captureQuality = ''; render();
+        say('Image processing consent withdrawn. Image and reference cleared.');
+      }
     };
     side.append(start);
 
@@ -942,8 +1054,10 @@ export function initVisionKioskApp(options: {
       void loadPhoto(f);
       file.value = '';
     };
+    const uploadButton = button('Upload a photo', () => file.click());
+    uploadButton.disabled = !imageConsent;
     side.append(
-      button('Upload a photo', () => file.click()),
+      uploadButton,
       file,
       make('small', '', 'JPG, PNG or WebP · up to 15 MB')
     );
@@ -953,14 +1067,16 @@ export function initVisionKioskApp(options: {
       layout,
       actions(
         button('Back', () => move(0)),
-        button(
-          capture ? 'Continue to my style' : 'Continue without camera',
-          () => move(2),
-          'primary'
-        ),
+        button('Use this color reference', () => {
+          if (!reference || captureQuality) { say(captureQuality || 'Select a reference color first, or use the sample test.'); return; }
+          colorSource = 'local-image'; move(2);
+        }, 'primary'),
+        button('Use sample color test', () => { reference = [184, 10, 107]; colorSource = 'sample'; captureQuality = ''; move(2); say('Using a sample palette, not a camera analysis.'); }),
+        button('No result — leave safely', () => { reset(); say('No result selected. All session data cleared.'); }),
         endButton()
       )
     );
+    if (captureQuality) screen.append(make('p', 'quiz-error', captureQuality));
     renderReference();
   }
 
@@ -992,7 +1108,7 @@ export function initVisionKioskApp(options: {
     screen.append(
       heading(
         'What do you like to wear?',
-        "Select at least one top and one bottom. These preferences are editable; we don't assume your gender, size or body type."
+        'Select at least one top and one bottom. Your style, occasion, colors to avoid and optional size guide the sample catalog. We do not infer your gender or body type.'
       )
     );
     const layout = make('div', 'kiosk-interview-layout');
@@ -1067,6 +1183,14 @@ export function initVisionKioskApp(options: {
     });
     exclusions.append(list);
     prefs.append(exclusions);
+    const colorExclusions = make('details', 'kiosk-exclusions');
+    colorExclusions.append(make('summary', '', 'Colors I prefer to avoid'));
+    VISION_FABRIC_COLORS.forEach(c => {
+      const label = make('label'); const input = make('input'); input.type = 'checkbox'; input.name = 'kiosk-avoid-color'; input.value = c.name; input.checked = profile.avoidColors.includes(c.name);
+      input.onchange = () => { profile.avoidColors = Array.from(colorExclusions.querySelectorAll<HTMLInputElement>('input:checked')).map(i => i.value); interviewDone = false; };
+      label.append(input, document.createTextNode(c.name)); colorExclusions.append(label);
+    });
+    prefs.append(colorExclusions, sizeControl());
 
     const error = make('p', 'quiz-error');
     error.id = 'kiosk-profile-error';
@@ -1150,7 +1274,8 @@ export function initVisionKioskApp(options: {
     screen.append(strip);
 
     const products = make('div', 'kiosk-products');
-    look.items.forEach((item) => {
+    look.items.forEach((item, index) => {
+      if (fastFindSize && !(item.kind === 'shoes' ? ['S', 'M', 'L'] : ['XS', 'S', 'M', 'L']).includes(fastFindSize)) return;
       const g = VISION_GARMENTS.find((gar) => gar.id === item.garmentId);
       if (!g) return;
       const article = make('article', 'kiosk-product');
@@ -1183,7 +1308,7 @@ export function initVisionKioskApp(options: {
               ? 'Clothing · Rack D'
               : 'Footwear · Module C';
       detail.append(
-        make('p', 'kiosk-location', `${place} · simulated location`),
+        make('p', 'kiosk-location', `Floor 2 · Aisle ${index + 3} · ${place} · simulated location`),
         make('small', '', `Ref. DEMO-${g.id.toUpperCase()} · No connected stock`)
       );
       article.append(detail);
@@ -1205,6 +1330,18 @@ export function initVisionKioskApp(options: {
     reasons.append(list);
     screen.append(reasons);
 
+    recommendationRows = look.items.map((item, index) => ({
+      sku: `DEMO-${item.garmentId.toUpperCase()}`, garmentId: item.garmentId,
+      title: VISION_GARMENTS.find(g => g.id === item.garmentId)!.name, color: item.color.name,
+      floor: `Floor 2 · Aisle ${index + 3} · Rack ${String.fromCharCode(65 + index)}`,
+      sizes: item.kind === 'shoes' ? ['S', 'M', 'L'] : ['XS', 'S', 'M', 'L']
+    })).filter(row => !fastFindSize || row.sizes.includes(fastFindSize));
+    if (!recommendationRows.length) {
+      screen.append(heading('No sample size match.', 'No recommendation is available for that size in this demonstration catalog. Change your size or ask an associate; no live inventory is connected.'));
+      screen.append(actions(button('Change my preferences', () => move(2)), endButton())); return;
+    }
+    screen.append(make('p', 'kiosk-private-note', `${colorSource === 'sample' ? 'Sample color test' : 'Local image-color reference'} · Demo stock and layout only. Size ${fastFindSizeVisible ? (fastFindSize || 'not specified') : 'hidden'}. No CRM or Ripley connection.`));
+
     screen.append(
       actions(
         button('See another combination', () => {
@@ -1220,13 +1357,159 @@ export function initVisionKioskApp(options: {
             'Simulation: this is where help from a store employee would be requested. This demo sends no alerts and does not share your photo.'
           )
         ),
+        button('Get ticket / QR', () => generateTicket(), 'primary'),
         endButton()
       )
     );
   }
 
+  function sizeControl(): HTMLDivElement {
+    const wrap = make('div', 'kiosk-size-control');
+    if (fastFindSizeVisible) {
+      const label = make('label', 'kiosk-select-label', 'Size filter (sample stock)');
+      const select = make('select'); select.id = 'kiosk-size';
+      ['', 'XS', 'S', 'M', 'L', 'XL', 'XXL'].forEach(value => { const option = make('option', '', value || 'Not specified'); option.value = value; option.selected = value === fastFindSize; select.append(option); });
+      select.onchange = () => { fastFindSize = select.value; activeTicket = null; if (stage === 4) render(); };
+      label.append(select); wrap.append(label);
+    }
+    const visibility = button(fastFindSizeVisible ? 'Hide size' : 'Edit size', () => { fastFindSizeVisible = !fastFindSizeVisible; render(); });
+    visibility.id = 'kiosk-size-visibility'; wrap.append(visibility);
+    return wrap;
+  }
+
+  function fastFind(): void {
+    if (!screen) return;
+    screen.append(heading('Welcome back. Straight to the aisle.', 'Mode 2 uses a saved demo palette, tastes, size and sample purchase history. No repeat photo or interview. Profile lookup, locations and stock are simulated, enabled store by store.'));
+    const saved = profiles.get(identityKey);
+    screen.append(make('p', 'kiosk-private-note', 'Saved demo profile · ' + fastFindColor + ' · Taste: ' + fastFindTaste + ' · Recent sample purchases: ' + (saved?.recentPurchases.join(', ') || 'none in this tab')));
+    const controls = make('div', 'fastfind-controls');
+    const paletteLabel = make('label', 'kiosk-select-label', 'Saved color preference');
+    const palette = make('select'); palette.id = 'fastfind-color';
+    Array.from(new Set([fastFindColor, 'Cool sample palette', 'Warm sample palette', 'Soft sample palette'])).forEach(value => { const o = make('option', '', value); o.value = value; palette.append(o); });
+    palette.onchange = () => {
+      fastFindColor = palette.value; reference = palette.value.startsWith('Warm') ? [175, 101, 79] : palette.value.startsWith('Soft') ? [183, 171, 156] : [184, 10, 107];
+      activeTicket = null; render();
+    };
+    paletteLabel.append(palette);
+    const tasteLabel = make('label', 'kiosk-select-label', 'Saved clothing taste');
+    const taste = make('select'); taste.id = 'fastfind-taste';
+    Object.entries(VISION_LABELS.style).forEach(([value, text]) => { const o = make('option', '', text); o.value = value; o.selected = value === profile.style; taste.append(o); });
+    taste.onchange = () => { profile.style = taste.value as VisionProfile['style']; fastFindTaste = taste.value; activeTicket = null; render(); };
+    tasteLabel.append(taste); controls.append(paletteLabel, tasteLabel, sizeControl()); screen.append(controls);
+    const result = recommendVisionLooks(profile, reference ? [{ label: 'Saved demo reference', rgb: reference }] : []);
+    recommendationRows = result.looks.map((look, index) => {
+      const item = look.items.find(v => v.kind === 'top')!;
+      return { sku: 'DEMO-' + item.garmentId.toUpperCase() + '-' + index, garmentId: item.garmentId,
+        title: VISION_GARMENTS.find(g => g.id === item.garmentId)!.name, color: item.color.name,
+        floor: 'Floor 2 · Aisle ' + (index + 3) + ' · Rack ' + String.fromCharCode(65 + index), sizes: ['XS', 'S', 'M', 'L'] };
+    }).filter(row => !fastFindSize || row.sizes.includes(fastFindSize));
+    const results = make('div', 'fastfind-results');
+    recommendationRows.forEach(row => {
+      const card = make('article', 'fastfind-result');
+      card.append(createClothingImg(row.garmentId, { alt: 'Reference photograph, not a live SKU' }), make('h4', '', row.title + ' · ' + row.color), make('p', '', row.floor),
+        make('p', 'kiosk-location', fastFindSizeVisible ? 'Sample stock: ' + (fastFindSize || row.sizes.join(' / ')) : 'Size hidden'),
+        make('small', '', row.sku + ' · illustrative location and stock, not a live feed'));
+      results.append(card);
+    });
+    screen.append(results, make('p', 'kiosk-private-note', 'Reference photographs may differ from the suggested color in each label. These are not live Ripley products.'));
+    if (!recommendationRows.length) screen.append(make('p', 'quiz-error', result.error || 'No sample stock matches this size. Edit your size, ask an associate or finish without a result.'));
+    screen.append(actions(button('Back to RUT entry', () => move(0)), button('Get ticket / QR', () => generateTicket(), 'primary'), endButton()));
+  }
+
+  function generateTicket(): void {
+    if (!authorized || !recommendationRows.length) { say('No available sample items. Change preferences or finish without a result.'); return; }
+    const id = 'CPD-' + crypto.randomUUID().toUpperCase();
+    activeTicket = { id, payload: campaignCode + ':' + id, rows: structuredClone(recommendationRows), used: false, mode, tier: 0, purchased: [], loyalty: false };
+    purchasedSkus.clear(); puntosGo = false;
+    if (identityKey && reference) profiles.set(identityKey, { profile: structuredClone(profile), reference: [...reference], size: fastFindSize, color: mode === 'first' ? 'Reference ' + hexFromRgb(reference) : fastFindColor, taste: profile.style, recentPurchases: profiles.get(identityKey)?.recentPurchases || [] });
+    move(5);
+  }
+
+  function ticketContent(): HTMLElement {
+    const ticket = make('aside', 'kiosk-ticket-demo'); ticket.setAttribute('aria-label', 'Color-Play demo ticket');
+    if (!activeTicket) return ticket;
+    ticket.append(make('h3', '', 'Color-Play × Ripley'), make('strong', '', 'DEMO TICKET — NOT VALID AT CHECKOUT'), ticketQr(activeTicket.payload),
+      make('p', 'ticket-token', activeTicket.payload), make('p', '', 'Campaign: ' + campaignCode + ' · ' + demoSessionId()),
+      make('p', '', 'Mode ' + (mode === 'first' ? '1' : '2') + ' · Sample store layout'));
+    activeTicket.rows.forEach(row => ticket.append(make('p', '', row.title + ' · ' + row.color + ' · ' + row.floor)));
+    ticket.append(make('p', '', fastFindSizeVisible ? 'Size: ' + (fastFindSize || 'not specified') : 'Size hidden'),
+      make('p', '', 'Cumulative working tiers: 1 garment → 3%, 2 → 5%, 3+ → 8%. Maximum one tier, not 3% + 5% + 8%. Eligibility and stacking require Ripley approval.'),
+      make('p', '', 'Optional Puntos Go sign-up is previewed separately at demo checkout. No enrollment occurs here.'),
+      make('small', '', 'QR contains only the campaign and a random ticket token. No RUT, photo or profile. Not redeemable in a real store.'));
+    return ticket;
+  }
+
+  function ticketView(): void {
+    if (!screen) return;
+    screen.append(heading('One ticket. A clearer handoff.', 'A real QR is generated locally. Print it or try the clearly simulated checkout. There is no POS, CRM or printer integration.'), ticketContent(),
+      actions(button('Print demo ticket', () => {
+        document.querySelector('#print-ticket')?.remove(); const copy = ticketContent(); copy.id = 'print-ticket'; document.body.append(copy); window.print();
+      }, 'primary'), button('Try checkout scan (demo)', () => move(6)), button('Back to recommendations', () => move(mode === 'first' ? 3 : 4)), endButton()));
+  }
+
+  function checkout(): void {
+    if (!screen || !activeTicket) return;
+    const ticket = activeTicket;
+    screen.append(heading('Checkout, without a real transaction.', 'Select what the shopper buys, then simulate scanning this ticket. Only this page changes: no sale, discount, loyalty enrollment or CRM write occurs.'));
+    const picks = make('fieldset', 'checkout-items'); picks.append(make('legend', '', 'Purchased in this simulation'));
+    const summary = make('p', 'checkout-summary');
+    const updateSummary = (): void => { const n = purchasedSkus.size; summary.textContent = n + ' sample garment(s) · proposed tier ' + (n >= 3 ? 8 : n === 2 ? 5 : n === 1 ? 3 : 0) + '%'; };
+    ticket.rows.forEach(row => {
+      const label = make('label', 'kiosk-consent'); const input = make('input'); input.type = 'checkbox'; input.value = row.sku; input.name = 'checkout-purchased'; input.checked = purchasedSkus.has(row.sku); input.disabled = ticket.used;
+      input.onchange = () => { if (input.checked) purchasedSkus.add(row.sku); else purchasedSkus.delete(row.sku); updateSummary(); };
+      label.append(input, document.createTextNode(row.title + ' · ' + row.color)); picks.append(label);
+    });
+    updateSummary(); screen.append(picks, summary);
+    const loyalty = make('label', 'kiosk-consent'); const loyaltyCheck = make('input'); loyaltyCheck.type = 'checkbox'; loyaltyCheck.id = 'puntos-go-demo'; loyaltyCheck.checked = puntosGo; loyaltyCheck.disabled = ticket.used;
+    loyaltyCheck.onchange = () => { puntosGo = loyaltyCheck.checked; };
+    loyalty.append(loyaltyCheck, document.createTextNode('Preview Puntos Go opt-in (separate and optional; this does not enroll anyone).')); screen.append(loyalty);
+    const scanLabel = make('label', 'kiosk-select-label', 'Scanned ticket payload (demo)');
+    const scan = make('input'); scan.id = 'checkout-token'; scan.autocomplete = 'off'; scan.value = ticket.payload; scan.disabled = ticket.used; scanLabel.append(scan); screen.append(scanLabel);
+    const status = make('p', 'quiz-error'); status.id = 'checkout-status'; status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); screen.append(status);
+    const scanButton = button(ticket.used ? 'Demo ticket already used' : 'Simulate ticket scan', () => {
+      if (ticket.used) { status.textContent = 'This demo ticket has already been scanned. Duplicate checkout blocked in this tab.'; return; }
+      if (scan.value.trim() !== ticket.payload) { status.textContent = 'Unknown or modified demo QR token. No checkout recorded.'; return; }
+      if (!purchasedSkus.size) { status.textContent = 'Select at least one purchased sample garment, or finish without a purchase.'; return; }
+      ticket.used = true; ticket.purchased = [...purchasedSkus]; ticket.tier = purchasedSkus.size >= 3 ? 8 : purchasedSkus.size === 2 ? 5 : 3; ticket.loyalty = puntosGo;
+      const boughtRows = ticket.rows.filter(row => purchasedSkus.has(row.sku));
+      receipts.push({ ticketId: ticket.id, mode: ticket.mode, colors: boughtRows.map(row => row.color), style: profile.style, size: fastFindSize, bought: [...purchasedSkus], declined: ticket.rows.filter(row => !purchasedSkus.has(row.sku)).map(row => row.sku), tier: ticket.tier, loyalty: puntosGo });
+      const saved = profiles.get(identityKey); if (saved) saved.recentPurchases = [...purchasedSkus];
+      render(); say('Simulated checkout recorded once in this tab. No purchase, discount or Puntos Go enrollment occurred.');
+    }, 'primary');
+    scanButton.disabled = ticket.used; screen.append(actions(scanButton, button('Back to ticket', () => move(5)), endButton()));
+    if (ticket.used) {
+      status.textContent = 'Demo receipt recorded · tier ' + ticket.tier + '% · Puntos Go preview ' + (ticket.loyalty ? 'opted in' : 'not requested') + '. Duplicate scan is blocked.';
+      screen.append(button('View Merchant data loop (demo)', () => move(7), 'primary'));
+    }
+  }
+
+  function merchant(): void {
+    if (!screen) return;
+    screen.append(heading('From a shortlist to a buying signal.', 'Session → simulated checkout → mock CRM → Merchant preview. These are local demo events, not shopper research, a real customer database or proof of better supplier buys.'));
+    const panel = make('div', 'merchant-preview');
+    receipts.forEach(receipt => {
+      const row = make('article', 'merchant-demo-row');
+      row.append(make('h4', '', 'Local demo receipt'), make('p', 'ticket-token', receipt.ticketId), make('p', '', 'Colors purchased (demo): ' + receipt.colors.join(', ') + ' · Style: ' + receipt.style + ' · Size: ' + (fastFindSizeVisible ? receipt.size || 'unspecified' : 'hidden')),
+        make('p', '', 'Bought: ' + receipt.bought.join(', ') + ' · Not bought from shortlist: ' + (receipt.declined.join(', ') || 'none')),
+        make('p', '', 'Proposed discount: ' + receipt.tier + '% · Puntos Go: ' + (receipt.loyalty ? 'optional preview' : 'not requested')),
+        make('small', '', 'A non-purchase does not establish color doubt or a causal reason. CRM matching is simulated; no RUT is exposed.'));
+      panel.append(row);
+    });
+    screen.append(panel, make('p', 'kiosk-private-note', 'Retailer, IT/Data, Operations and privacy approvals are required before any real profile, stock, POS or CRM integration. All values disappear on reset, tab hide, reload or after 3 minutes without input.'),
+      actions(button('Return to RUT entry (keep this local demo)', () => move(0)), endButton()));
+  }
+
+  function armIdle(): void {
+    clearTimeout(idleTimer);
+    if (authorized || profiles.size || receipts.length || document.querySelector<HTMLInputElement>('#kiosk-rut')?.value) {
+      idleTimer = setTimeout(() => { reset(); say('Session cleared after 3 minutes without input.'); }, 180000);
+    }
+  }
+
   function render(): void {
     if (!screen) return;
+    document.querySelector('#print-ticket')?.remove();
+    const previousFocus = document.activeElement?.id;
     screen.replaceChildren();
     if (stepLabel) stepLabel.textContent = titles[stage];
     stepBtns.forEach((b) =>
@@ -1235,15 +1518,17 @@ export function initVisionKioskApp(options: {
         Number(b.dataset.screen) === stage ? 'true' : 'false'
       )
     );
-    const views = [welcome, photo, interview, result];
+    const views = [welcome, photo, interview, result, fastFind, ticketView, checkout, merchant];
     views[stage]();
+    if (previousFocus) document.getElementById(previousFocus)?.focus({ preventScroll: true });
   }
 
   stepBtns.forEach((b) => {
     b.onclick = () => {
       uploadEpoch++;
-      move(Number(b.dataset.screen));
-      say(`Kiosk view: ${titles[stage]}.`);
+      const requested = Number(b.dataset.screen);
+      move(requested);
+      if (stage === requested) say(`Kiosk view: ${titles[stage]}.`);
     };
   });
 
@@ -1257,25 +1542,16 @@ export function initVisionKioskApp(options: {
   }
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      const active = !!media;
-      stopCamera();
-      if (active && stage === 1) {
-        render();
-        say('Camera turned off when the page was hidden.');
-      }
-    }
+    if (document.hidden) { reset(); say('Session and camera cleared when this tab was hidden.'); }
   });
-  window.addEventListener('pagehide', () => {
-    stopCamera();
-    uploadEpoch++;
-  });
+  window.addEventListener('pagehide', reset);
+  ['pointerdown', 'keydown', 'input'].forEach(event => document.addEventListener(event, armIdle, { passive: true }));
 
   render();
 
   return {
     setStep(stepIndex: number) {
-      if (stepIndex >= 0 && stepIndex <= 3) {
+      if (stepIndex >= 0 && stepIndex <= 7) {
         move(stepIndex, false);
       }
     },

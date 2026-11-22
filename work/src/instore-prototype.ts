@@ -147,9 +147,8 @@ function renderFixtureDiagramState(): void {
 
   detailContainer.innerHTML = `
     <div class="hotspot-detail-header">
-      <span class="editorial-kicker">COMPONENT ${escapeHtml(hotspot.code)}</span>
       <h3>${escapeHtml(hotspot.title)}</h3>
-      <span class="tag ${hotspot.evidenceTag === 'O' ? 'o' : 'a'}">[${hotspot.evidenceTag}] ${escapeHtml(stageModeLabel)}</span>
+      <p>${escapeHtml(stageModeLabel)} · hardware proposal</p>
     </div>
     <p class="hotspot-spec">${escapeHtml(hotspot.physicalSpec)}</p>
     <div class="hotspot-comparison">
