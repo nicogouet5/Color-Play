@@ -9,7 +9,7 @@ The supplied v2 brand playbook wins: Color-Play magenta#A8115F, pink#E6338A, Rip
 ## Composition
 Concept introduction → discovery / pilot / embed proposal → two-mode interactive kiosk → retained3D fixture explorer. The operating UI has one primary action per state, sentence-case labels, opaque white fields and plum mode selection. No new generic dashboard or fake real-time chart.
 
-The kiosk opens with two equal, whole-panel buttons: first visit on the left (“Quiero ver qué me podría quedar bien”) and returning shopper on the right (“¿Qué hay de nuevo para mí?”). These entry choices use the user-requested Spanish copy; the rest of the existing UI remains in English. RUT/consent appears only after selection. At600px and below the choices stack, first visit first. Back restores focus to the chosen panel; reset and idle/visibility cleanup restore the two-option screen.
+The kiosk opens with two equal, whole-panel buttons: first visit on the left (“I want to see what could suit me”) and returning shopper on the right (“What's new for me?”). The entry choices and the rest of the UI use English. RUT/consent appears only after selection. At600px and below the choices stack, first visit first. Back restores focus to the chosen panel; reset and idle/visibility cleanup restore the two-option screen.
 
 The material unique to this product is the garment reference, its named target color, size and aisle, then its own printable QR. Color labels may differ from reference photos; the difference is disclosed.
 

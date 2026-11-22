@@ -640,11 +640,11 @@ export function initVisionKioskApp(options: {
   function welcome(): void {
     if (!screen) return;
     if (!entryModeChosen) {
-      screen.append(heading('¿Qué buscas hoy?', 'Elige cómo quieres comenzar.'));
+      screen.append(heading('What are you looking for today?', 'Choose how you would like to start.'));
       const choices = make('div', 'kiosk-visit-options');
       const visits = [
-        { value: 'first' as const, title: 'Quiero ver qué me podría quedar bien', description: 'Si es tu primera visita, descubre colores y prendas según tus gustos.', action: 'Es mi primera visita' },
-        { value: 'returning' as const, title: '¿Qué hay de nuevo para mí?', description: 'Si ya usaste Color-Play, vuelve a tus preferencias y explora nuevas sugerencias.', action: 'Ya he usado Color-Play' }
+        { value: 'first' as const, title: 'I want to see what could suit me', description: 'On your first visit, discover colors and clothes based on your tastes.', action: 'It\'s my first visit' },
+        { value: 'returning' as const, title: 'What\'s new for me?', description: 'Used Color-Play before? Return to your preferences and explore new suggestions.', action: 'I\'ve used Color-Play before' }
       ];
       visits.forEach(visit => {
         const choice = button('', () => {
@@ -657,14 +657,14 @@ export function initVisionKioskApp(options: {
         choice.append(title, description, make('span', 'kiosk-visit-action', visit.action));
         choices.append(choice);
       });
-      screen.append(choices, make('p', 'kiosk-private-note', 'Prototipo de demostración. Ambas opciones continúan con RUT de prueba y consentimiento; no consultan sistemas de Ripley.'));
+      screen.append(choices, make('p', 'kiosk-private-note', 'Demo prototype. Both options continue with a demo RUT and consent. Neither connects to Ripley systems.'));
       return;
     }
     screen.append(heading(mode === 'first' ? 'Your first visit starts here.' : 'Welcome back to Color-Play.', 'Use a demo RUT and consent to continue. This public prototype has no Ripley CRM connection. Do not enter a real identifier.'));
     const layout = make('div', 'kiosk-welcome');
     const form = make('form', 'kiosk-entry');
     form.dataset.visitMode = mode;
-    form.append(button('Volver a las opciones', () => {
+    form.append(button('Back to options', () => {
       authEpoch++; entryModeChosen = false; render();
       document.getElementById('kiosk-mode-' + mode)?.focus({ preventScroll: true });
     }));

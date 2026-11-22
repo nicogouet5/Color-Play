@@ -38,7 +38,7 @@ const artifacts = path.join(__dirname, 'artifacts', 'ripley-v2');
     };
     const chooseVisit = async mode => {
       const form = page.locator('.kiosk-entry');
-      if (await form.count() && await form.getAttribute('data-visit-mode') !== mode) await page.getByRole('button',{name:'Volver a las opciones',exact:true}).click();
+      if (await form.count() && await form.getAttribute('data-visit-mode') !== mode) await page.getByRole('button',{name:'Back to options',exact:true}).click();
       if (await page.locator('.kiosk-visit-options').count()) await page.locator('#kiosk-mode-'+mode).click();
     };
     const assertCleared = async () => { assert.equal(await page.locator('#kiosk-rut').count(),0); assert.equal(await page.locator('.kiosk-visit-option').count(),2); };
@@ -63,7 +63,7 @@ const artifacts = path.join(__dirname, 'artifacts', 'ripley-v2');
     await page.locator('[data-screen="3"]').click();assert.ok((await page.locator('#kiosk-message').innerText()).includes('consent first'));
     await page.locator('#kiosk-mode-first').focus(); await page.keyboard.press('Enter');
     assert.equal(await page.locator('.kiosk-entry').getAttribute('data-visit-mode'),'first');
-    await page.getByRole('button',{name:'Volver a las opciones',exact:true}).click();
+    await page.getByRole('button',{name:'Back to options',exact:true}).click();
     assert.equal(await page.evaluate(()=>document.activeElement.id),'kiosk-mode-first');
     await page.keyboard.press('Tab'); await page.keyboard.press('Enter');
     assert.equal(await page.locator('.kiosk-entry').getAttribute('data-visit-mode'),'returning');
