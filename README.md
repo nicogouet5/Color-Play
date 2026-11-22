@@ -11,27 +11,27 @@ Use demo RUT **11.111.111-1** and accept the local-demo consent.
 
 - **First visit:** RUT → consent → local camera/image-color extraction or an explicitly sample color test → tastes and optional size → sample garment locations → printable ticket / genuine QR.
 - **Returning shopper:** RUT → saved demo palette, tastes, editable/hideable size and recent sample purchases → aisle recommendations. Available store by store in the demo.
-- **Checkout demo:** select bought garments, simulate scanning the ticket, inspect proposed3% →5% →8% tiers and separately preview optional Puntos Go enrollment.
+- **Checkout demo:** select bought garments, simulate scanning the ticket, inspect proposed3% → 5% → 8% tiers and separately preview optional Puntos Go enrollment.
 - **Merchant preview:** local session → mock checkout → mock CRM → purchased and unpurchased shortlist items. No causal reason for non-purchase is inferred.
 
 ### What is real vs. simulated
 | Functional in this browser | Not connected or validated |
 |---|---|
 | RUT check digit, consent and memory-only identifier link | Customer authentication or Ripley customer lookup |
-| Local image-color extraction and preference filtering | Validated skin colorimetry or5000K calibration |
+| Local image-color extraction and preference filtering | Validated skin colorimetry or 5000K calibration |
 | Editable size, sample-stock no-match and aisle display | Live inventory, real SKUs or actual store floor plans |
 | Genuine offline QR, print-only ticket and local duplicate-scan blocking | POS redemption, real discounts or cross-device deduplication |
 | Local mock purchase/CRM events | Ripley CRM, purchase attribution or actual Puntos Go enrollment |
 
-**Do not enter a real RUT.** No RUT/photo/profile is sent or persistently saved. The QR contains no RUT. Finish/reset, tab hide, reload or3 minutes idle clears the local session. A RUT is an identifier, not authentication; a production profile service needs additional approved safeguards. [Privacy](privacy.html).
+**Do not enter a real RUT.** No RUT/photo/profile is sent or persistently saved. The QR contains no RUT. Finish/reset, tab hide, reload or 3 minutes idle clears the local session. A RUT is an identifier, not authentication; a production profile service needs additional approved safeguards. [Privacy](privacy.html).
 
 ## Current strategy
-The two documents supplied in `ColorPlay_x_Ripley.zip` supersede the former anonymous-first / drapes-first / SaaS proposal. The current sell-then-embed proposal is CLP25 MM pilot, CLP200 MM system/IP transfer (80 upfront +120 earn-out), then CLP12 MM/month for a three-person embedded team. **All amounts and projections are illustrative assumptions to negotiate**, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.
+The two documents supplied in `ColorPlay_x_Ripley.zip` supersede the former anonymous-first / drapes-first / SaaS proposal. The current sell-then-embed proposal is CLP 25 MM pilot, CLP 200 MM system/IP transfer (80 upfront + 120 earn-out), then CLP 12 MM/month for a three-person embedded team. **All amounts and projections are illustrative assumptions to negotiate**, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.
 
 Old decks, dossiers, exports, screenshots and obsolete tooling have been removed from this checkout. Git history is retained; the current build publishes only `dist/`, never the whole repository.
 
 ## Development
-Node22. No new npm dependencies were added for the QR; Project Nayuki's MIT generator is vendored with its license.
+Node 22. No new npm dependencies were added for the QR; Project Nayuki's MIT generator is vendored with its license.
 
 ```sh
 npm ci --prefix work

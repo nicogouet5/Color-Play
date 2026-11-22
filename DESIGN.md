@@ -18,7 +18,7 @@ Use existing Manrope fonts locally. Body16px;14px secondary notes.44px minimum t
 Retained rack rotation and optional auto-orbit, reduced-motion support and existing control feedback. No additional decorative loop or ASCII from the retired presentation.
 
 ## Responsive and print
-Natural vertical flow at320/390/768/1024/1440px. Mobile results stack; no clipped kiosk panel. The print action produces the ticket only, with a real QR, clear demo/non-redeemable warning and no RUT. A5 print preview is a browser demonstration, not a thermal-printer driver.
+Natural vertical flow at 320/390/768/1024/1440px. Mobile results stack; no clipped kiosk panel. The print action produces the ticket only, with a real QR, clear demo/non-redeemable warning and no RUT. A5 print preview is a browser demonstration, not a thermal-printer driver.
 
 ## Assets and honesty
 See docs/ASSET_PROVENANCE.md and credits.html. Existing enclosure imagery predates the new camera/21–24 inch specification and stays labeled concept material. No real store installation, validated algorithm, partnership or live stock is implied.

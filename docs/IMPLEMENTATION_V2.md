@@ -29,7 +29,7 @@ See `CLEANUP_V2.json`. Finder initially could not trash an iCloud-backed item; t
 - Real generated QR decoded by Chrome BarcodeDetector to the exact payload.
 - One-page A5 ticket PDF; print action called and print-only DOM checked.
 - Fake-camera device exercises capture and stopped tracks; local PNG upload/extraction and invalid MIME recovery checked. This is not physical-device calibration testing.
-- RUT error/consent guards, no saved profile, unavailable store, zero stock, size hiding, unique tickets, invalid token and duplicate scan,3/5/8 tiers, optional loyalty, Merchant preview, visibility/idle reset, no storage, keyboard tabs,3D controls,200% text at390px and no-JS fallback checked.
+- RUT error/consent guards, no saved profile, unavailable store, zero stock, size hiding, unique tickets, invalid token and duplicate scan,3/5/8 tiers, optional loyalty, Merchant preview, visibility/idle reset, no storage, keyboard tabs,3D controls,200% text at 390px and no-JS fallback checked.
 - Zero JavaScript errors, failed requests or external data requests in the local suite.
 - Impeccable mechanical detector on changed UI targets: empty finding list.
 - Taste inspector1440/768/390:0 FAIL /2 WARN. Warnings concern the retained showcase hero and below-fold showcase sections, not a single-screen Merchant dashboard; the embedded kiosk is the operating UI.
@@ -38,7 +38,7 @@ See `CLEANUP_V2.json`. Finder initially could not trash an iCloud-backed item; t
 ## Visual review
 Retained retail editorial world / supplied v2 palette and Manrope; no new direction deal or new decorative scene. Live thing: the actual two-mode kiosk, QR and mock checkout loop. Final nine inspector images were opened, plus desktop and mobile interaction captures. Removed inherited tiny tracked uppercase labels, removed the floating kiosk shadow and tightened the hardware-detail spacing.
 
-Conservative internal critique: design6.5, usability8, creativity6.5, content8; weighted overall7.1/10, not an academic grade or external review. Existing concept imagery is the realism cap; no authentic field footage or installation was fabricated. The combined showcase is still long on a phone and its reference photos do not show exact suggested colors; both limits are disclosed.
+Conservative internal critique: design 6.5, usability 8, creativity 6.5, content 8; weighted overall7.1/10, not an academic grade or external review. Existing concept imagery is the realism cap; no authentic field footage or installation was fabricated. The combined showcase is still long on a phone and its reference photos do not show exact suggested colors; both limits are disclosed.
 
 ## Still required for a real service
 Retailer / IT / Operations / legal authorization; backend and identity safeguards; real stock/location/POS/CRM contracts; actual loyalty enrollment; an approved controller/retention/rights policy; validated colorimetry and calibration; hardware quotes and printer support; a consented study and traceable iteration. None are implied completed by publishing this prototype.
