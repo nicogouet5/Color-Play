@@ -1533,7 +1533,7 @@ export function initVisionKioskApp(options: {
     document.querySelector('#print-ticket')?.remove();
     const previousFocus = document.activeElement?.id;
     screen.replaceChildren();
-    if (stepLabel) stepLabel.textContent = stage === 0 && !entryModeChosen ? 'Inicio' : titles[stage];
+    if (stepLabel) stepLabel.textContent = stage === 0 && !entryModeChosen ? 'Start' : titles[stage];
     stepBtns.forEach((b) =>
       b.setAttribute(
         'aria-pressed',
