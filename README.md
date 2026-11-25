@@ -1,39 +1,99 @@
-# Color-Play × Ripley
+<div align="center">
+  <img src="work/assets/color-play-logo.png" alt="Color-Play" width="180" />
+  <h1>Color-Play × Ripley</h1>
+  <p><strong>Color clarity at the rack. Better buys for Ripley.</strong></p>
+  <p>
+    <a href="https://nicogouet5.github.io/Color-Play/"><strong>🚀 Open Live Prototype</strong></a> ·
+    <a href="https://uddcl-my.sharepoint.com/:f:/r/personal/n_inostrosab_udd_cl/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fn%5Finostrosab%5Fudd%5Fcl%2FDocuments%2FPorfolio%20Color%2DPlay&share=cgoRW6%2DaDGF7RKeCHU1sDl1WEgUC%2DWk5d2vbzLbjt4QMuCO%5FkA"><strong>📂 Portfolio &amp; Drive</strong></a> ·
+    <a href="docs/COLOR_PLAY_ALIGNMENT_v2.md">Strategy v2</a> ·
+    <a href="docs/ColorPlay%20x%20Ripley.md">Strategy &amp; Brand</a> ·
+    <a href="docs/IMPLEMENTATION_V2.md">Implementation &amp; Limits</a> ·
+    <a href="privacy.html">Privacy</a>
+  </p>
+</div>
 
-**Color clarity at the rack. Better buys for Ripley.**
+> [!NOTE]
+> A computer-vision kiosk proposal for **Ripley's physical apparel stores**: a color reference and clothing taste profile guide shoppers toward garments, while a proposed purchase-linked data loop helps Merchants learn across **color × size × style**.
+> **Ripley is the proposed buyer, not a confirmed partner.**
 
-[Open the prototype](https://nicogouet5.github.io/Color-Play/) · [Strategy v2](docs/COLOR_PLAY_ALIGNMENT_v2.md) · [Strategy and brand](docs/ColorPlay%20x%20Ripley.md) · [Implementation and limits](docs/IMPLEMENTATION_V2.md)
+<p align="center">
+  <img src="work/assets/render_3d_hero_store.jpg" alt="Color-Play in-store kiosk concept render" width="100%" />
+</p>
 
-Portfolio & Drive with documents : *https://uddcl-my.sharepoint.com/:f:/r/personal/n_inostrosab_udd_cl/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fn%5Finostrosab%5Fudd%5Fcl%2FDocuments%2FPorfolio%20Color%2DPlay&share=cgoRW6%2DaDGF7RKeCHU1sDl1WEgUC%2DWk5d2vbzLbjt4QMuCO%5FkA**
+---
 
-A computer-vision kiosk proposal for Ripley's physical stores: a color reference and clothing tastes guide a shopper toward garments; a proposed purchase-linked data loop helps Merchants learn about color × size × style. Ripley is the proposed buyer.
+## ✨ What's Inside the Prototype
 
-## Try it
-Start by choosing **“I want to see what could suit me”** (first visit, left) or **“What's new for me?”** (returning, right). On phones the choices stack in the same order. Then use demo RUT **11.111.111-1** and accept the local-demo consent.
+| Experience | Flow | Key Highlights |
+|---|---|---|
+| **First Visit** | `RUT` → `Consent` → `Color Test` → `Tastes & Size` → `Aisles` → `QR` | Local camera/image color extraction or sample color test, garment wayfinding, and printable offline QR ticket. |
+| **Returning Shopper** | `RUT` → `Saved Demo Profile` → `Aisle Recommendations` | Instant access to saved demo palette, tastes, editable/hideable size, and recent sample purchases (per-store toggle). |
+| **Checkout Demo** | `Scan Ticket` → `Select Bought Items` → `Discount Tiers` | Simulates `3% → 5% → 8%` non-additive tiers, blocks duplicate scans locally, and previews optional **Puntos Go** enrollment. |
+| **Merchant Loop** | `Session` → `Mock Checkout` → `Mock CRM` | Displays purchased vs. unpurchased shortlist items without exposing RUT or inferring causal non-purchase reasons. |
+| **3D Store & Kiosk Explorer** | `2-Floor Store Map` → `In-Model Zoom` → `Full Fixture 3D` | Interactive two-floor cutaway (**Floor 1 · Women's** & **Floor 2 · Men's**), escalators, fitting rooms, checkouts, and click-to-zoom kiosks. |
 
-- **First visit:** RUT → consent → local camera/image-color extraction or an explicitly sample color test → tastes and optional size → sample garment locations → printable ticket / genuine QR.
-- **Returning shopper:** RUT → saved demo palette, tastes, editable/hideable size and recent sample purchases → aisle recommendations. Available store by store in the demo.
-- **Checkout demo:** select bought garments, simulate scanning the ticket, inspect proposed3% → 5% → 8% tiers and separately preview optional Puntos Go enrollment.
-- **Merchant preview:** local session → mock checkout → mock CRM → purchased and unpurchased shortlist items. No causal reason for non-purchase is inferred.
+---
 
-### What is real vs. simulated
+## 🧪 Try the Demo
+
+1. Open the [**Live Prototype**](https://nicogouet5.github.io/Color-Play/).
+2. Choose **“I want to see what could suit me”** (first visit, left) or **“What's new for me?”** (returning, right) — stacked in the same order on mobile.
+3. Enter the demo RUT **`11.111.111-1`** and accept the local-demo consent.
+4. Scroll to **Explore the store concept** to orbit the 2-floor Ripley layout, isolate **Floor 1** or **Floor 2**, click any **Color-Play pin (`L1` / `L2`)** to zoom inside the model, or inspect the full 3D kiosk fixture.
+
+> [!IMPORTANT]
+> **Do not enter a real RUT.** No RUT, photo, or profile is transmitted or persistently stored. The generated QR contains no RUT. Finishing, resetting, hiding the tab, reloading, or **3 minutes of idle time** clears the local session. A RUT is an identifier, not authentication.
+
+---
+
+## 🔍 What Is Real vs. Simulated
+
 | Functional in this browser | Not connected or validated |
 |---|---|
-| RUT check digit, consent and memory-only identifier link | Customer authentication or Ripley customer lookup |
+| RUT check digit, consent, and memory-only identifier link | Customer authentication or Ripley customer lookup |
 | Local image-color extraction and preference filtering | Validated skin colorimetry or 5000K calibration |
-| Editable size, sample-stock no-match and aisle display | Live inventory, real SKUs or actual store floor plans |
-| Genuine offline QR, print-only ticket and local duplicate-scan blocking | POS redemption, real discounts or cross-device deduplication |
-| Local mock purchase/CRM events | Ripley CRM, purchase attribution or actual Puntos Go enrollment |
+| Editable size, sample-stock no-match, and aisle display | Live inventory, real SKUs, or actual store floor plans |
+| Genuine offline QR, print-only ticket, and local duplicate-scan block | POS redemption, real discounts, or cross-device deduplication |
+| Local mock purchase/CRM events | Ripley CRM, purchase attribution, or actual Puntos Go enrollment |
 
-**Do not enter a real RUT.** No RUT/photo/profile is sent or persistently saved. The QR contains no RUT. Finish/reset, tab hide, reload or 3 minutes idle clears the local session. A RUT is an identifier, not authentication; a production profile service needs additional approved safeguards. [Privacy](privacy.html).
+---
 
-## Current strategy
-The two documents supplied in `ColorPlay_x_Ripley.zip` supersede the former anonymous-first / drapes-first / SaaS proposal. The current sell-then-embed proposal is CLP 25 MM pilot, CLP 200 MM system/IP transfer (80 upfront + 120 earn-out), then CLP 12 MM/month for a three-person embedded team. **All amounts and projections are illustrative assumptions to negotiate**, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.
+## 🏬 Concept Renders
 
-Old decks, dossiers, exports, screenshots and obsolete tooling have been removed from this checkout. Git history is retained; the current build publishes only `dist/`, never the whole repository.
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="work/assets/render_3d_hero_store.jpg" alt="Store bay concept" width="100%" /><br />
+      <sub><strong>Store Bay Concept</strong><br />Illustrative retail placement</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="work/assets/render_3d_kiosk_closeup.jpg" alt="Kiosk enclosure concept" width="100%" /><br />
+      <sub><strong>Kiosk Enclosure</strong><br />Interactive terminal &amp; camera</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="work/assets/render_3d_stage1_portable.jpg" alt="Portable discovery rack" width="100%" /><br />
+      <sub><strong>Stage 1 Portable Rack</strong><br />Study fixture before integration</sub>
+    </td>
+  </tr>
+</table>
 
-## Development
-Node 22. No new npm dependencies were added for the QR; Project Nayuki's MIT generator is vendored with its license.
+---
+
+## 💼 Current Strategy
+
+The two documents supplied in `ColorPlay_x_Ripley.zip` supersede the former anonymous-first / drapes-first / SaaS proposal. The current **sell-then-embed** proposal is:
+
+- **Pilot:** CLP 25 MM
+- **System / IP transfer:** CLP 200 MM (80 upfront + 120 earn-out)
+- **Embedded team (3 people):** CLP 12 MM / month
+
+*All amounts and projections are illustrative assumptions to negotiate, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.*
+
+---
+
+## 🛠️ Local Development
+
+Requires **Node 22**. No extra runtime dependencies are needed for the QR generator (Project Nayuki's MIT generator is vendored with its license).
 
 ```sh
 npm ci --prefix work
@@ -43,15 +103,29 @@ npm --prefix work run check:prototype
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765/`. Browser checks use Chrome on macOS by default; override `CHROME_PATH` elsewhere. GitHub Actions installs from the lockfile, typechecks, builds and deploys only `dist/` on a push to `main`.
+Open `http://127.0.0.1:8765/`. Browser checks use Chrome on macOS by default (`CHROME_PATH` can override it elsewhere). GitHub Actions installs from the lockfile, typechecks, builds, and deploys only `dist/` on push to `main`.
 
-## Structure
-- `work/src/`: TypeScript kiosk, offline QR,3D concept and CSS.
-- `work/assets/`: only assets used by the current prototype and their provenance.
-- `work/build_prototype.mjs`: self-contained HTML builder.
-- `work/check_instore_prototype.cjs`: browser, privacy, QR and accessibility tests.
-- `docs/`: current strategy, implementation, privacy and cleanup record.
-- `index.html`, `privacy.html`, `credits.html`: current generated entry points.
-- `dist/`: generated Pages artifact (ignored by Git).
+---
 
-Team: Nicolas Inostrosa · Valeria Ravanal · Rocio Torres · Simple Tech / UDD.
+## 📁 Repository Structure
+
+```text
+.
+├── index.html                   # Generated self-contained prototype entry
+├── privacy.html                 # Demo privacy and retention notice
+├── credits.html                 # Asset credits and limits
+├── docs/                        # Strategy v2, implementation, privacy, and QA records
+├── dist/                        # Generated GitHub Pages artifact (gitignored)
+└── work/
+    ├── build_prototype.mjs      # Self-contained HTML/CSS/JS bundler
+    ├── check_instore_prototype.cjs  # Playwright, Axe, QR, and privacy checks
+    ├── assets/                  # Logos, 3D concept renders, and catalog photos
+    └── src/                     # TypeScript kiosk UI, offline QR, 3D store map & fixture
+```
+
+---
+
+<div align="center">
+  <img src="work/assets/simple-tech.png" alt="Simple Tech / UDD" width="48" />
+  <p><strong>Team:</strong> Nicolas Inostrosa · Valeria Ravanal · Rocio Torres · Simple Tech / UDD</p>
+</div>
