@@ -10,7 +10,9 @@ import {
 import {
   initStoreMap,
   type StoreCameraPreset,
-  type StoreFloorView
+  type StoreFloorView,
+  type StoreKioskFocusInfo,
+  type StoreKioskId
 } from './store-map';
 import type {
   DeploymentStageId,
@@ -262,6 +264,8 @@ function initHeroGalleryAnd3DControls(): void {
   if (mapCanvas) {
     const floorButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-map-floor]'));
     const presetButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-map-preset]'));
+    const introPanel = document.querySelector<HTMLElement>('#store-kiosk-intro');
+    const instructionBadge = document.querySelector<HTMLElement>('#store-map-instruction');
     const syncFloorButtons = (floor: StoreFloorView) => {
       for (const button of floorButtons) {
         const active = button.dataset.mapFloor === floor;
@@ -277,12 +281,59 @@ function initHeroGalleryAnd3DControls(): void {
       }
     };
 
+    const renderKioskIntro = (info: StoreKioskFocusInfo | null) => {
+      if (!introPanel) return;
+      if (!info) {
+        introPanel.hidden = true;
+        introPanel.innerHTML = '';
+        if (instructionBadge) {
+          instructionBadge.textContent =
+            'Drag to orbit & tilt · Click a Color-Play pin (L1 / L2) to zoom into the kiosk';
+        }
+        return;
+      }
+      const otherId: StoreKioskId = info.id === 'womens' ? 'mens' : 'womens';
+      const otherLabel = otherId === 'mens' ? 'Jump to Floor 2 kiosk' : 'Jump to Floor 1 kiosk';
+      const badgeClass = info.id === 'womens' ? 'is-l1' : 'is-l2';
+      introPanel.innerHTML = `
+        <div class="store-kiosk-intro-head">
+          <span class="store-floor-badge ${badgeClass}">${escapeHtml(info.badge)}</span>
+          <button type="button" class="store-kiosk-close" data-intro-zoom-out aria-label="Zoom back out to store map">← Back out</button>
+        </div>
+        <h3>${escapeHtml(info.title)}</h3>
+        <p class="store-kiosk-placement">${escapeHtml(info.placement)}</p>
+        <p class="store-kiosk-copy">${escapeHtml(info.intro)}</p>
+        <ul class="store-kiosk-highlights">
+          ${info.highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+        </ul>
+        <div class="store-kiosk-intro-actions">
+          <button type="button" class="is-primary" data-intro-open-fixture="${escapeHtml(info.location)}">Inspect full 3D kiosk →</button>
+          <button type="button" class="is-secondary" data-intro-switch="${otherId}">${otherLabel}</button>
+        </div>
+      `;
+      introPanel.hidden = false;
+      if (instructionBadge) {
+        instructionBadge.textContent = 'Close-up inside model · Drag to orbit around kiosk · Esc to zoom out';
+      }
+      announcePolite(`Zoomed into ${info.title}. ${info.placement}`);
+      introPanel.querySelector<HTMLButtonElement>('[data-intro-zoom-out]')?.addEventListener('click', () => {
+        storeModel.focusKiosk(null);
+        mapCanvas.focus();
+      });
+      introPanel.querySelector<HTMLButtonElement>('[data-intro-open-fixture]')?.addEventListener('click', (event) => {
+        const loc = (event.currentTarget as HTMLButtonElement).dataset.introOpenFixture;
+        setView('fixture', loc);
+        document.querySelector<HTMLButtonElement>('[data-store-view="fixture"]')?.focus();
+      });
+      introPanel.querySelector<HTMLButtonElement>('[data-intro-switch]')?.addEventListener('click', (event) => {
+        const nextId = (event.currentTarget as HTMLButtonElement).dataset.introSwitch as StoreKioskId | undefined;
+        if (nextId) storeModel.focusKiosk(nextId);
+      });
+    };
+
     const storeModel = initStoreMap(
       mapCanvas,
-      (location) => {
-        setView('fixture', location);
-        document.querySelector<HTMLButtonElement>('[data-store-view="fixture"]')?.focus();
-      },
+      renderKioskIntro,
       (floor) => {
         syncFloorButtons(floor);
         announcePolite(
@@ -301,11 +352,11 @@ function initHeroGalleryAnd3DControls(): void {
         if (floor) storeModel.setFloor(floor);
       });
     }
-    document.querySelectorAll<HTMLButtonElement>('[data-map-focus-floor]').forEach((button) => {
+    document.querySelectorAll<HTMLButtonElement>('[data-map-zoom-kiosk]').forEach((button) => {
       button.addEventListener('click', () => {
-        const floor = button.dataset.mapFocusFloor as StoreFloorView | undefined;
-        if (floor) {
-          storeModel.setFloor(floor);
+        const kioskId = button.dataset.mapZoomKiosk as StoreKioskId | undefined;
+        if (kioskId) {
+          storeModel.focusKiosk(kioskId);
           mapCanvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       });
@@ -323,7 +374,7 @@ function initHeroGalleryAnd3DControls(): void {
       button.addEventListener('click', () => storeModel.rotate(Number(button.dataset.mapRotate) * 0.32));
     });
     document.querySelectorAll<HTMLButtonElement>('[data-map-zoom]').forEach((button) => {
-      button.addEventListener('click', () => storeModel.zoomBy(Number(button.dataset.mapZoom) * 0.16));
+      button.addEventListener('click', () => storeModel.zoomBy(Number(button.dataset.mapZoom) * 0.22));
     });
     document.querySelector<HTMLButtonElement>('#store-map-reset')?.addEventListener('click', () => {
       storeModel.reset();

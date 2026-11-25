@@ -1,5 +1,17 @@
 export type StoreFloorView = 'all' | 'floor1' | 'floor2';
 export type StoreCameraPreset = 'isometric' | 'front' | 'top';
+export type StoreKioskId = 'womens' | 'mens';
+
+export interface StoreKioskFocusInfo {
+  id: StoreKioskId;
+  floor: 'floor1' | 'floor2';
+  badge: string;
+  location: string;
+  title: string;
+  placement: string;
+  intro: string;
+  highlights: string[];
+}
 
 export interface StoreMapController {
   rotate: (amount: number) => void;
@@ -7,6 +19,7 @@ export interface StoreMapController {
   zoomBy: (delta: number) => void;
   setFloor: (floor: StoreFloorView) => void;
   setPreset: (preset: StoreCameraPreset) => void;
+  focusKiosk: (id: StoreKioskId | null) => void;
   reset: () => void;
 }
 
@@ -725,48 +738,68 @@ function addColorPlayKiosk(
   pushBox(layer, x, y + 0.02, z, 2.34, 0.12, 1.16, '#ebe3ef', { topHex: '#f8f4fa', noBottom: true });
   pushBox(layer, x, y + 0.04, z + 0.59, 2.32, 0.07, 0.06, '#b80a6b', { noBottom: true });
 
-  // Matte charcoal outer portal frame (#201b27)
+  // Matte charcoal outer portal frame (#201b27) + stabilizer feet
+  pushBox(layer, x - 1.06, y + 0.14, z, 0.11, 0.06, 0.86, '#201b27', { noBottom: true });
+  pushBox(layer, x + 1.06, y + 0.14, z, 0.11, 0.06, 0.86, '#201b27', { noBottom: true });
   pushBox(layer, x - 1.06, y + 0.14, z, 0.09, 2.08, 0.09, '#201b27', { noBottom: true });
   pushBox(layer, x + 1.06, y + 0.14, z, 0.09, 2.08, 0.09, '#201b27', { noBottom: true });
   pushBox(layer, x - 0.12, y + 0.14, z, 0.07, 2.04, 0.07, '#2a2233', { noBottom: true });
 
-  // 5000K CRI 95+ Overhead Daylight Canopy Bar
+  // 5000K CRI 95+ Overhead Daylight Canopy Bar + luminous diffuser
   pushBox(layer, x, y + 2.18, z + 0.08, 2.26, 0.14, 0.34, '#201b27', {
     frontHex: '#741472',
     topHex: '#3c3249',
     noBottom: true
   });
+  pushBox(layer, x, y + 2.22, z + 0.26, 1.35, 0.05, 0.03, '#f6d2e8', { noBottom: true });
   pushBox(layer, x, y + 2.12, z + 0.1, 2.08, 0.06, 0.22, '#fff9e4', { topHex: '#ffffff', noBottom: true });
 
   // Left Bay: Kiosk Backboard, Mirror, Camera, Magenta Touchscreen, Swatches & QR slot
-  pushBox(layer, x - 0.59, y + 0.14, z - 0.04, 0.86, 1.98, 0.09, '#ffffff', { noBottom: true });
-  // Framing mirror
-  pushBox(layer, x - 0.59, y + 1.32, z + 0.04, 0.66, 0.56, 0.05, '#dce7f3', { stroke: '#a8115f', noBottom: true });
-  // Camera module above screen
-  pushBox(layer, x - 0.59, y + 1.21, z + 0.14, 0.18, 0.09, 0.08, '#201b27', { noBottom: true });
-  // Angled touchscreen console housing & bright magenta display
+  pushBox(layer, x - 0.59, y + 0.14, z - 0.04, 0.86, 1.98, 0.09, '#ffffff', { noBottom: true, depthBias: -0.2 });
+  // Framing mirror with subtle reflective sheen band
+  pushBox(layer, x - 0.59, y + 1.32, z + 0.04, 0.66, 0.56, 0.05, '#dce7f3', { stroke: '#a8115f', noBottom: true, depthBias: 0.1 });
+  pushBox(layer, x - 0.68, y + 1.42, z + 0.08, 0.16, 0.36, 0.02, '#f2f7fc', { noBottom: true, depthBias: 0.25 });
+  // Camera module & optical lens above screen
+  pushBox(layer, x - 0.59, y + 1.21, z + 0.14, 0.2, 0.09, 0.08, '#201b27', { noBottom: true, depthBias: 0.2 });
+  pushBox(layer, x - 0.59, y + 1.23, z + 0.2, 0.055, 0.055, 0.025, '#59829d', { noBottom: true, depthBias: 0.35 });
+  // Angled touchscreen console housing & bright interactive UI tiles
   pushBox(layer, x - 0.59, y + 0.78, z + 0.16, 0.72, 0.44, 0.24, '#201b27', {
-    frontHex: '#d81b7e',
-    noBottom: true
+    frontHex: '#341430',
+    noBottom: true,
+    depthBias: 0.15
   });
-  pushBox(layer, x - 0.59, y + 0.84, z + 0.29, 0.56, 0.3, 0.04, '#fcecf5', {
-    frontHex: '#f6d2e8',
+  pushBox(layer, x - 0.59, y + 0.84, z + 0.3, 0.58, 0.32, 0.035, '#fcecf5', {
+    frontHex: '#fff5fa',
     stroke: '#a8115f',
-    noBottom: true
+    noBottom: true,
+    depthBias: 0.28
   });
-  // 4 tactile fabric drape swatches below console
+  // Mini split welcome tiles rendered right on the kiosk screen for close-up realism
+  pushBox(layer, x - 0.73, y + 0.89, z + 0.33, 0.23, 0.2, 0.02, '#a8115f', { noBottom: true, depthBias: 0.42 });
+  pushBox(layer, x - 0.45, y + 0.89, z + 0.33, 0.23, 0.2, 0.02, '#f1c7df', { noBottom: true, depthBias: 0.42 });
+  // Brushed metal drape bar + 4 tactile fabric drape swatches below console
+  pushBox(layer, x - 0.59, y + 0.69, z + 0.14, 0.72, 0.03, 0.04, '#887f94', { noBottom: true, depthBias: 0.22 });
   const drapes = ['#b80a6b', '#d999be', '#b84a27', '#4a5d3f'];
   drapes.forEach((col, i) => {
-    pushBox(layer, x - 0.83 + i * 0.16, y + 0.48, z + 0.14, 0.12, 0.22, 0.05, col, { noBottom: true });
+    pushBox(layer, x - 0.83 + i * 0.16, y + 0.45, z + 0.16, 0.12, 0.24, 0.045, col, { noBottom: true, depthBias: 0.32 });
   });
-  // QR printer bay
-  pushBox(layer, x - 0.59, y + 0.24, z + 0.1, 0.64, 0.18, 0.16, '#fcecf5', { stroke: '#a8115f', noBottom: true });
+  // QR ticket printer bay + glowing slot
+  pushBox(layer, x - 0.59, y + 0.23, z + 0.11, 0.64, 0.18, 0.16, '#fcecf5', { stroke: '#a8115f', noBottom: true, depthBias: 0.18 });
+  pushBox(layer, x - 0.59, y + 0.3, z + 0.21, 0.32, 0.04, 0.02, '#201b27', { noBottom: true, depthBias: 0.36 });
 
-  // Right Bay: Curated Garment Rail with 5 Color-Matched Pieces
-  pushBox(layer, x + 0.48, y + 1.88, z, 1.12, 0.06, 0.06, '#9d95a6', { noBottom: true });
+  // Right Bay: Curated Garment Rail with 5 Color-Matched Pieces, Hangers & Hook Tags
+  pushBox(layer, x + 0.48, y + 1.88, z, 1.12, 0.055, 0.055, '#9d95a6', { noBottom: true });
   garments.forEach((col, i) => {
     const gx = x + 0.08 + i * 0.2;
-    pushBox(layer, gx, y + 0.78, z + (i % 2 === 0 ? 0.04 : 0), 0.14, 1.02, 0.42, col, { noBottom: true });
+    const zPull = i % 2 === 0 ? 0.05 : 0;
+    // Metal hanger stem
+    pushBox(layer, gx, y + 1.78, z + zPull, 0.025, 0.11, 0.06, '#625a6c', { noBottom: true });
+    // Sculpted garment body
+    pushBox(layer, gx, y + 0.78, z + zPull, 0.13, 1.0, 0.42, col, { noBottom: true });
+    // Light collar highlight
+    pushBox(layer, gx, y + 1.67, z + zPull + 0.04, 0.135, 0.1, 0.24, '#f7f1ee', { noBottom: true });
+    // Bottom hook number tag
+    pushBox(layer, gx, y + 0.64, z + zPull + 0.14, 0.11, 0.09, 0.04, i % 2 === 0 ? '#b80a6b' : '#201b27', { noBottom: true });
   });
 
   // Translucent 5000K daylight cone beneath canopy (Pass D)
@@ -784,7 +817,7 @@ function addColorPlayKiosk(
   });
 }
 
-function buildFloor1(layer: FloorLayer): void {
+function buildFloor1(layer: FloorLayer, facadeLayer: FloorLayer): void {
   const y = 0;
 
   // 1. Structural Foundation Slab
@@ -821,24 +854,24 @@ function buildFloor1(layer: FloorLayer): void {
   addWallMerchBay(layer, -2.55, y, -7.12, 'back', ['#b85e74', '#f2e3da', '#8e3d52', '#dfa9a8', '#685966', '#d8b79f']);
   addWallMerchBay(layer, 2.55, y, -7.12, 'back', ['#c88ea2', '#f5ece6', '#67776c', '#d5a897', '#493c4d', '#e4cfc3']);
 
-  // 4. Front Mall Storefront Facade (z = +7.35)
+  // 4. Front Mall Storefront Facade (z = +7.35) — placed in facadeLayer so close-up interior zoom cuts away cleanly
   // Left & right low showcase plinths + dressed display window mannequins + glass fronts
-  pushBox(layer, -6.75, y, 7.15, 7.2, 0.34, 0.92, '#d9cfd6', { topHex: '#f8f5f7', noBottom: true });
-  pushBox(layer, 6.75, y, 7.15, 7.2, 0.34, 0.92, '#d9cfd6', { topHex: '#f8f5f7', noBottom: true });
-  addMannequin(layer, -8.1, y + 0.34, 7.05, '#b80a6b', '#27222f');
-  addMannequin(layer, -5.4, y + 0.34, 7.05, '#e8d4c8', '#7d4d5b');
-  addMannequin(layer, 5.4, y + 0.34, 7.05, '#c48996', '#f2e8e2');
-  addMannequin(layer, 8.1, y + 0.34, 7.05, '#5b6c5a', '#e4d8ce');
+  pushBox(facadeLayer, -6.75, y, 7.15, 7.2, 0.34, 0.92, '#d9cfd6', { topHex: '#f8f5f7', noBottom: true });
+  pushBox(facadeLayer, 6.75, y, 7.15, 7.2, 0.34, 0.92, '#d9cfd6', { topHex: '#f8f5f7', noBottom: true });
+  addMannequin(facadeLayer, -8.1, y + 0.34, 7.05, '#b80a6b', '#27222f');
+  addMannequin(facadeLayer, -5.4, y + 0.34, 7.05, '#e8d4c8', '#7d4d5b');
+  addMannequin(facadeLayer, 5.4, y + 0.34, 7.05, '#c48996', '#f2e8e2');
+  addMannequin(facadeLayer, 8.1, y + 0.34, 7.05, '#5b6c5a', '#e4d8ce');
 
   // Storefront translucent glass windows (Pass D)
-  pushBox(layer, -6.75, y + 0.34, 7.56, 7.1, 1.85, 0.08, '#cde4f2', { target: 'glass', alpha: 0.28, noBottom: true });
-  pushBox(layer, 6.75, y + 0.34, 7.56, 7.1, 1.85, 0.08, '#cde4f2', { target: 'glass', alpha: 0.28, noBottom: true });
+  pushBox(facadeLayer, -6.75, y + 0.34, 7.56, 7.1, 1.85, 0.08, '#cde4f2', { target: 'glass', alpha: 0.28, noBottom: true });
+  pushBox(facadeLayer, 6.75, y + 0.34, 7.56, 7.1, 1.85, 0.08, '#cde4f2', { target: 'glass', alpha: 0.28, noBottom: true });
 
-  // Ripley Main Entrance Portal Arch + Security EAS Gates
-  pushBox(layer, -3.15, y, 7.45, 0.3, 2.38, 0.36, '#302435', { noBottom: true });
-  pushBox(layer, 3.15, y, 7.45, 0.3, 2.38, 0.36, '#302435', { noBottom: true });
-  pushBox(layer, 0, y + 2.28, 7.45, 6.65, 0.44, 0.38, '#741472', { topHex: '#943592', noBottom: true });
-  // 4 Security EAS anti-theft pedestals at doorway
+  // Ripley Main Entrance Portal Arch (cut away during interior kiosk close-up)
+  pushBox(facadeLayer, -3.15, y, 7.45, 0.3, 2.38, 0.36, '#302435', { noBottom: true });
+  pushBox(facadeLayer, 3.15, y, 7.45, 0.3, 2.38, 0.36, '#302435', { noBottom: true });
+  pushBox(facadeLayer, 0, y + 2.28, 7.45, 6.65, 0.44, 0.38, '#741472', { topHex: '#943592', noBottom: true });
+  // 4 Security EAS anti-theft pedestals at doorway (stay visible to orient the entrance)
   for (const gx of [-2.25, -0.78, 0.78, 2.25]) {
     pushBox(layer, gx, y + 0.02, 6.55, 0.12, 1.24, 0.34, '#dcd6df', { topHex: '#a8115f', noBottom: true });
   }
@@ -898,8 +931,8 @@ function buildFloor1(layer: FloorLayer): void {
   // 11. Floor 1 Checkout & Customer Service (Back-Right)
   addCheckoutCounter(layer, 6.8, y, -5.95, 5.1, 3, '#741472');
 
-  // 12. Architectural Planters
-  addPlanter(layer, -3.55, y, 6.45);
+  // 12. Architectural Planters (front-left planter goes in facadeLayer so it never obscures Kiosk L1 close-up)
+  addPlanter(facadeLayer, -3.55, y, 6.45);
   addPlanter(layer, 3.55, y, 6.45);
   addPlanter(layer, -3.15, y, -2.85);
   addPlanter(layer, 3.15, y, -2.85);
@@ -1226,26 +1259,60 @@ const ZONE_LABELS: ZoneLabel[] = [
   { text: 'ESCALATORS & ATRIUM', pos: { x: 0, y: FLOOR_HEIGHT + 0.75, z: -0.65 }, floor: 'floor2', detailOnly: true, tone: 'slate' }
 ];
 
-const KIOSK_PINS: KioskPinSpec[] = [
+const KIOSK_PINS: (KioskPinSpec & { focusInfo: StoreKioskFocusInfo; focusPos: Vec3; focusYaw: number })[] = [
   {
     id: 'womens',
     floor: 'floor1',
     badge: 'L1',
-    title: 'Color-Play · Women\'s',
-    subtitle: 'Floor 1 mall entrance · Click to inspect kiosk',
+    title: "Color-Play · Women's",
+    subtitle: 'Floor 1 mall entrance · Click to zoom in',
     location: "Women's clothing",
     anchor: { x: -3.35, y: 2.35, z: 4.55 },
-    top: { x: -3.35, y: 3.45, z: 4.55 }
+    top: { x: -3.35, y: 3.45, z: 4.55 },
+    focusPos: { x: -3.35, y: 1.15, z: 4.55 },
+    focusYaw: -0.26,
+    focusInfo: {
+      id: 'womens',
+      floor: 'floor1',
+      badge: 'Floor 1 · Women\'s Entrance',
+      location: "Women's clothing",
+      title: 'Color-Play Station · Floor 1',
+      placement: 'Main mall boulevard, right past the storefront windows and EAS security gates.',
+      intro:
+        'Positioned at the exact entry threshold of Women’s Apparel so incoming shoppers can run a quick color reference check under calibrated 5000K light before browsing Casual & Trends, Tailoring, or Accessories.',
+      highlights: [
+        '5000K CRI 95+ overhead canopy neutralizes store lighting shifts',
+        'Angled camera & touch terminal with 4 physical comparison drapes',
+        'Integrated curated seasonal rail + QR ticket printer to checkout'
+      ]
+    }
   },
   {
     id: 'mens',
     floor: 'floor2',
     badge: 'L2',
-    title: 'Color-Play · Men\'s',
-    subtitle: 'Floor 2 escalator landing · Click to inspect kiosk',
+    title: "Color-Play · Men's",
+    subtitle: 'Floor 2 escalator landing · Click to zoom in',
     location: "Men's clothing",
     anchor: { x: 2.65, y: FLOOR_HEIGHT + 2.35, z: 4.55 },
-    top: { x: 2.65, y: FLOOR_HEIGHT + 3.45, z: 4.55 }
+    top: { x: 2.65, y: FLOOR_HEIGHT + 3.45, z: 4.55 },
+    focusPos: { x: 2.65, y: FLOOR_HEIGHT + 1.15, z: 4.55 },
+    focusYaw: -0.26,
+    focusInfo: {
+      id: 'mens',
+      floor: 'floor2',
+      badge: 'Floor 2 · Men\'s Entrance',
+      location: "Men's clothing",
+      title: 'Color-Play Station · Floor 2',
+      placement: 'Upper escalator landing overlooking the open central atrium.',
+      intro:
+        'Greets shoppers the moment they step onto the Men’s Apparel floor—guiding returning RUT profiles straight to matching sizes across Denim & Casual, Tailoring & Suits, and the Footwear wall.',
+      highlights: [
+        'High-visibility arrival touchpoint facing both up/down escalators',
+        'RUT returning mode skips re-testing and points straight to aisles',
+        'Curated men’s palette rail (navy, charcoal, sage, camel) + QR handoff'
+      ]
+    }
   }
 ];
 
@@ -1278,7 +1345,7 @@ function drawRoundedRect(
  */
 export function initStoreMap(
   canvas: HTMLCanvasElement,
-  openKiosk: (location: string) => void,
+  onFocusKiosk: (info: StoreKioskFocusInfo | null) => void,
   onFloorChange?: (floor: StoreFloorView) => void
 ): StoreMapController {
   const context = canvas.getContext('2d');
@@ -1289,6 +1356,7 @@ export function initStoreMap(
       zoomBy() {},
       setFloor() {},
       setPreset() {},
+      focusKiosk() {},
       reset() {}
     };
   }
@@ -1296,11 +1364,12 @@ export function initStoreMap(
 
   // Pre-build static architectural geometry once for snappy 60fps interaction.
   const floor1Layer = createLayer();
+  const floor1FacadeLayer = createLayer();
   const floor1StubLayer = createLayer();
   const atriumLayer = createLayer();
   const floor2StubLayer = createLayer();
   const floor2Layer = createLayer();
-  buildFloor1(floor1Layer);
+  buildFloor1(floor1Layer, floor1FacadeLayer);
   buildFloor1EscalatorStub(floor1StubLayer);
   buildAtriumConnectors(atriumLayer, 0, FLOOR_HEIGHT);
   buildFloor2EscalatorStub(floor2StubLayer);
@@ -1311,31 +1380,53 @@ export function initStoreMap(
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let activeFloor: StoreFloorView = 'all';
+  let focusedKioskId: StoreKioskId | null = null;
+
   let yaw = -0.52;
   let pitch = 0.48;
   let zoom = 0.96;
+  let focusX = 0;
   let focusY = FLOOR_HEIGHT * 0.56;
+  let focusZ = 0;
+  let screenCenterFrac = 0.5;
 
   let targetYaw = yaw;
   let targetPitch = pitch;
   let targetZoom = zoom;
+  let targetFocusX = focusX;
   let targetFocusY = focusY;
+  let targetFocusZ = focusZ;
+  let targetScreenCenterFrac = screenCenterFrac;
 
   let dragging = false;
   let moved = false;
   let startX = 0;
   let startY = 0;
-  let hoveredPinId: 'womens' | 'mens' | null = null;
+  let hoveredPinId: StoreKioskId | null = null;
   let projectedPins: ProjectedPin[] = [];
   let rafId = 0;
 
   function clampTargets(): void {
-    targetPitch = Math.max(0.28, Math.min(1.18, targetPitch));
-    targetZoom = Math.max(0.74, Math.min(1.75, targetZoom));
+    targetPitch = Math.max(0.24, Math.min(1.18, targetPitch));
+    targetZoom = Math.max(0.74, Math.min(3.6, targetZoom));
+  }
+
+  function clearKioskFocus(notify = true): void {
+    if (focusedKioskId !== null) {
+      focusedKioskId = null;
+      targetFocusX = 0;
+      targetFocusZ = 0;
+      targetScreenCenterFrac = 0.5;
+      if (notify) onFocusKiosk(null);
+    }
   }
 
   function applyFloorCamera(floor: StoreFloorView): void {
+    clearKioskFocus(true);
     activeFloor = floor;
+    targetFocusX = 0;
+    targetFocusZ = 0;
+    targetScreenCenterFrac = 0.5;
     if (floor === 'all') {
       targetPitch = 0.48;
       targetZoom = 0.96;
@@ -1354,24 +1445,49 @@ export function initStoreMap(
     scheduleFrame();
   }
 
+  function focusKioskInternal(id: StoreKioskId | null): void {
+    if (!id) {
+      applyFloorCamera(activeFloor);
+      return;
+    }
+    const spec = KIOSK_PINS.find((p) => p.id === id);
+    if (!spec) return;
+    focusedKioskId = id;
+    activeFloor = spec.floor;
+    onFloorChange?.(spec.floor);
+    targetFocusX = spec.focusPos.x;
+    targetFocusY = spec.focusPos.y;
+    targetFocusZ = spec.focusPos.z;
+    targetYaw = spec.focusYaw;
+    targetPitch = 0.4;
+    targetZoom = canvas.clientWidth < 600 ? 2.55 : 3.2;
+    targetScreenCenterFrac = canvas.clientWidth >= 780 ? 0.35 : 0.5;
+    clampTargets();
+    onFocusKiosk(spec.focusInfo);
+    scheduleFrame();
+  }
+
   function projectPoint(p: Vec3, width: number, height: number, baseScale: number): Projected {
     const cosY = Math.cos(yaw);
     const sinY = Math.sin(yaw);
     const cosP = Math.cos(pitch);
     const sinP = Math.sin(pitch);
 
-    const rx = p.x * cosY - p.z * sinY;
-    const rz = p.x * sinY + p.z * cosY;
-    const ry = p.y - focusY;
+    const dx = p.x - focusX;
+    const dy = p.y - focusY;
+    const dz = p.z - focusZ;
 
-    const depth = rz * cosP + ry * sinP;
+    const rx = dx * cosY - dz * sinY;
+    const rz = dx * sinY + dz * cosY;
+
+    const depth = rz * cosP + dy * sinP;
     const cameraDist = 56;
     const persp = cameraDist / Math.max(12, cameraDist - depth);
     const s = baseScale * persp;
 
     return {
-      x: width * 0.5 + rx * s,
-      y: height * 0.5 + (rz * sinP - ry * cosP) * s,
+      x: width * screenCenterFrac + rx * s,
+      y: height * 0.5 + (rz * sinP - dy * cosP) * s,
       depth,
       scale: s
     };
@@ -1527,10 +1643,14 @@ export function initStoreMap(
     // Strict layered floor rendering eliminates inter-floor Z-fighting!
     if (activeFloor === 'all') {
       renderLayer(floor1Layer, width, height, baseScale);
+      renderLayer(floor1FacadeLayer, width, height, baseScale);
       renderLayer(atriumLayer, width, height, baseScale);
       renderLayer(floor2Layer, width, height, baseScale);
     } else if (activeFloor === 'floor1') {
       renderLayer(floor1Layer, width, height, baseScale);
+      if (focusedKioskId !== 'womens') {
+        renderLayer(floor1FacadeLayer, width, height, baseScale);
+      }
       renderLayer(floor1StubLayer, width, height, baseScale);
     } else {
       // Subtle lower-atrium shadow reference + upper escalator run visible through open Floor 2 void
@@ -1541,33 +1661,34 @@ export function initStoreMap(
       renderLayer(floor2Layer, width, height, baseScale);
     }
 
-    // Floor Elevation Tags anchored cleanly on the right architectural slab edge (clear of bottom-left hint)
-    const slabTagX = Math.cos(yaw) >= 0 ? 11.45 : -11.45;
-    if (activeFloor === 'all' || activeFloor === 'floor1') {
-      const p1 = projectPoint({ x: slabTagX, y: 0.7, z: 3.2 }, width, height, baseScale);
-      drawPill(p1.x, p1.y, "FLOOR 1 · WOMEN'S", '#3c1f40', '#ffffff', '#ffffff', width < 520 ? 10 : 11);
-    }
-    if (activeFloor === 'all' || activeFloor === 'floor2') {
-      const p2 = projectPoint({ x: slabTagX, y: FLOOR_HEIGHT + 0.7, z: 3.2 }, width, height, baseScale);
-      drawPill(p2.x, p2.y, "FLOOR 2 · MEN'S", '#24354c', '#ffffff', '#ffffff', width < 520 ? 10 : 11);
-    }
+    // Floor Elevation Tags & Zone Labels (hidden during close-up kiosk zoom so the station shines cleanly)
+    if (!focusedKioskId) {
+      const slabTagX = Math.cos(yaw) >= 0 ? 11.45 : -11.45;
+      if (activeFloor === 'all' || activeFloor === 'floor1') {
+        const p1 = projectPoint({ x: slabTagX, y: 0.7, z: 3.2 }, width, height, baseScale);
+        drawPill(p1.x, p1.y, "FLOOR 1 · WOMEN'S", '#3c1f40', '#ffffff', '#ffffff', width < 520 ? 10 : 11);
+      }
+      if (activeFloor === 'all' || activeFloor === 'floor2') {
+        const p2 = projectPoint({ x: slabTagX, y: FLOOR_HEIGHT + 0.7, z: 3.2 }, width, height, baseScale);
+        drawPill(p2.x, p2.y, "FLOOR 2 · MEN'S", '#24354c', '#ffffff', '#ffffff', width < 520 ? 10 : 11);
+      }
 
-    // Architectural Zone Labels (compact on All Floors, rich detail when inspecting one floor)
-    const compact = width < 540;
-    for (const lbl of ZONE_LABELS) {
-      if (activeFloor === 'all' && lbl.detailOnly) continue;
-      if (activeFloor !== 'all' && lbl.floor !== activeFloor) continue;
-      if (compact && lbl.detailOnly && lbl.tone === 'neutral') continue;
-      const p = projectPoint(lbl.pos, width, height, baseScale);
-      const bgCol =
-        lbl.tone === 'plum'
-          ? 'rgba(116, 20, 114, 0.9)'
-          : lbl.tone === 'slate'
-            ? 'rgba(42, 52, 68, 0.88)'
-            : 'rgba(255, 255, 255, 0.88)';
-      const fgCol = lbl.tone === 'neutral' ? '#2c1f31' : '#ffffff';
-      const borderCol = lbl.tone === 'neutral' ? 'rgba(72, 41, 67, 0.22)' : undefined;
-      drawPill(p.x, p.y, lbl.text, bgCol, fgCol, borderCol, compact ? 9.5 : 10.5);
+      const compact = width < 540;
+      for (const lbl of ZONE_LABELS) {
+        if (activeFloor === 'all' && lbl.detailOnly) continue;
+        if (activeFloor !== 'all' && lbl.floor !== activeFloor) continue;
+        if (compact && lbl.detailOnly && lbl.tone === 'neutral') continue;
+        const p = projectPoint(lbl.pos, width, height, baseScale);
+        const bgCol =
+          lbl.tone === 'plum'
+            ? 'rgba(116, 20, 114, 0.9)'
+            : lbl.tone === 'slate'
+              ? 'rgba(42, 52, 68, 0.88)'
+              : 'rgba(255, 255, 255, 0.88)';
+        const fgCol = lbl.tone === 'neutral' ? '#2c1f31' : '#ffffff';
+        const borderCol = lbl.tone === 'neutral' ? 'rgba(72, 41, 67, 0.22)' : undefined;
+        drawPill(p.x, p.y, lbl.text, bgCol, fgCol, borderCol, compact ? 9.5 : 10.5);
+      }
     }
 
     // Interactive Strategic Color-Play Kiosk Pins
@@ -1576,6 +1697,14 @@ export function initStoreMap(
       if (activeFloor !== 'all' && spec.floor !== activeFloor) continue;
       const anchor = projectPoint(spec.anchor, width, height, baseScale);
       const top = projectPoint(spec.top, width, height, baseScale);
+
+      if (focusedKioskId === spec.id) {
+        // Subtle architectural callout above the zoomed-in kiosk canopy (never obscures the screen or rail)
+        const canopyTag = projectPoint({ x: spec.anchor.x, y: spec.anchor.y + 0.42, z: spec.anchor.z }, width, height, baseScale);
+        drawPill(canopyTag.x, canopyTag.y, `5000K · ${spec.title}`, '#741472', '#ffffff', '#ffffff', 11);
+        continue;
+      }
+
       const isHovered = hoveredPinId === spec.id;
 
       // Vertical leader stem connecting floating pin down to the kiosk canopy
@@ -1630,8 +1759,8 @@ export function initStoreMap(
       projectedPins.push({ spec, x: top.x, y: top.y, ax: anchor.x, ay: anchor.y });
     }
 
-    // Hover callout tooltip bar at top-right of canvas
-    if (hoveredPinId) {
+    // Hover callout tooltip bar at top-right of canvas (only when not already zoomed in)
+    if (hoveredPinId && !focusedKioskId) {
       const active = projectedPins.find((p) => p.spec.id === hoveredPinId);
       if (active) {
         const text = `${active.spec.title} — ${active.spec.subtitle}`;
@@ -1657,23 +1786,32 @@ export function initStoreMap(
       yaw = targetYaw;
       pitch = targetPitch;
       zoom = targetZoom;
+      focusX = targetFocusX;
       focusY = targetFocusY;
+      focusZ = targetFocusZ;
+      screenCenterFrac = targetScreenCenterFrac;
       draw();
       return;
     }
 
-    const ease = 0.18;
+    const ease = 0.14;
     yaw += (targetYaw - yaw) * ease;
     pitch += (targetPitch - pitch) * ease;
     zoom += (targetZoom - zoom) * ease;
+    focusX += (targetFocusX - focusX) * ease;
     focusY += (targetFocusY - focusY) * ease;
+    focusZ += (targetFocusZ - focusZ) * ease;
+    screenCenterFrac += (targetScreenCenterFrac - screenCenterFrac) * ease;
     draw();
 
     const settled =
       Math.abs(targetYaw - yaw) < 0.002 &&
       Math.abs(targetPitch - pitch) < 0.002 &&
-      Math.abs(targetZoom - zoom) < 0.002 &&
-      Math.abs(targetFocusY - focusY) < 0.01;
+      Math.abs(targetZoom - zoom) < 0.004 &&
+      Math.abs(targetFocusX - focusX) < 0.01 &&
+      Math.abs(targetFocusY - focusY) < 0.01 &&
+      Math.abs(targetFocusZ - focusZ) < 0.01 &&
+      Math.abs(targetScreenCenterFrac - screenCenterFrac) < 0.002;
 
     if (!settled) {
       rafId = requestAnimationFrame(stepAnimation);
@@ -1681,7 +1819,10 @@ export function initStoreMap(
       yaw = targetYaw;
       pitch = targetPitch;
       zoom = targetZoom;
+      focusX = targetFocusX;
       focusY = targetFocusY;
+      focusZ = targetFocusZ;
+      screenCenterFrac = targetScreenCenterFrac;
       draw();
     }
   }
@@ -1698,9 +1839,9 @@ export function initStoreMap(
     const y = clientY - rect.top;
     return projectedPins.find(
       (p) =>
-        Math.hypot(p.x - x, p.y - y) < 28 ||
-        Math.hypot(p.ax - x, p.ay - y) < 24 ||
-        (Math.abs(x - p.x) < 70 && Math.abs(y - (p.y - 31)) < 16)
+        Math.hypot(p.x - x, p.y - y) < 30 ||
+        Math.hypot(p.ax - x, p.ay - y) < 34 ||
+        (Math.abs(x - p.x) < 76 && Math.abs(y - (p.y - 31)) < 18)
     );
   }
 
@@ -1752,7 +1893,9 @@ export function initStoreMap(
     if (!moved) {
       const pin = findPinAt(e.clientX, e.clientY);
       if (pin) {
-        openKiosk(pin.spec.location);
+        hoveredPinId = null;
+        canvas.style.cursor = 'grab';
+        focusKioskInternal(pin.spec.id);
       }
     }
   });
@@ -1762,7 +1905,10 @@ export function initStoreMap(
   });
 
   canvas.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    if (e.key === 'Escape' && focusedKioskId) {
+      e.preventDefault();
+      focusKioskInternal(null);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       targetYaw += e.key === 'ArrowLeft' ? -0.22 : 0.22;
       scheduleFrame();
@@ -1773,18 +1919,24 @@ export function initStoreMap(
       scheduleFrame();
     } else if (e.key === '+' || e.key === '=') {
       e.preventDefault();
-      targetZoom += 0.14;
+      targetZoom += 0.16;
       clampTargets();
       scheduleFrame();
     } else if (e.key === '-' || e.key === '_') {
       e.preventDefault();
-      targetZoom -= 0.14;
+      targetZoom -= 0.16;
       clampTargets();
       scheduleFrame();
     }
   });
 
-  new ResizeObserver(() => draw()).observe(canvas);
+  new ResizeObserver(() => {
+    if (focusedKioskId) {
+      targetScreenCenterFrac = canvas.clientWidth >= 780 ? 0.35 : 0.5;
+      screenCenterFrac = targetScreenCenterFrac;
+    }
+    draw();
+  }).observe(canvas);
   draw();
 
   return {
@@ -1806,6 +1958,7 @@ export function initStoreMap(
       applyFloorCamera(floor);
     },
     setPreset(preset: StoreCameraPreset) {
+      clearKioskFocus(true);
       if (preset === 'isometric') {
         targetYaw = -0.52;
         targetPitch = activeFloor === 'all' ? 0.48 : 0.62;
@@ -1816,8 +1969,12 @@ export function initStoreMap(
         targetYaw = -0.02;
         targetPitch = 1.15;
       }
+      targetZoom = activeFloor === 'all' ? 0.96 : 1.06;
       clampTargets();
       scheduleFrame();
+    },
+    focusKiosk(id: StoreKioskId | null) {
+      focusKioskInternal(id);
     },
     reset() {
       targetYaw = -0.52;
