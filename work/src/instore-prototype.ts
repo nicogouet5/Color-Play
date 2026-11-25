@@ -216,6 +216,32 @@ function initHeroGalleryAnd3DControls(): void {
     });
   }
 
+  const map = document.querySelector<HTMLElement>('#store-map');
+  const detail = document.querySelector<HTMLElement>('#fixture-detail');
+  const viewButtons = document.querySelectorAll<HTMLButtonElement>('[data-store-view]');
+  const setView = (view: 'map' | 'fixture', location?: string) => {
+    if (map) map.hidden = view !== 'map';
+    if (detail) detail.hidden = view !== 'fixture';
+    viewButtons.forEach((button) => {
+      const active = button.dataset.storeView === view;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    if (view === 'fixture') {
+      rack3d?.renderNow();
+      if (location) announcePolite(`${location} entrance selected. Showing kiosk detail.`);
+    }
+  };
+  viewButtons.forEach((button) => button.addEventListener('click', () => {
+    setView(button.dataset.storeView === 'map' ? 'map' : 'fixture');
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-map-kiosk]').forEach((button) => {
+    button.addEventListener('click', () => {
+      setView('fixture', button.dataset.mapKiosk);
+      document.querySelector<HTMLButtonElement>('[data-store-view="fixture"]')?.focus();
+    });
+  });
+
   const canvas3d = document.querySelector<HTMLCanvasElement>('#rack-3d-canvas');
   if (canvas3d) {
     rack3d = initRack3DViewer({
