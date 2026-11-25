@@ -4,7 +4,9 @@
 
 [Open the prototype](https://nicogouet5.github.io/Color-Play/) · [Strategy v2](docs/COLOR_PLAY_ALIGNMENT_v2.md) · [Strategy and brand](docs/ColorPlay%20x%20Ripley.md) · [Implementation and limits](docs/IMPLEMENTATION_V2.md)
 
-A computer-vision kiosk proposal for Ripley's physical stores: a color reference and clothing tastes guide a shopper toward garments; a proposed purchase-linked data loop helps Merchants learn about color × size × style. Ripley is the proposed buyer, **not a confirmed partner**.
+Portfolio & Drive with documents : *https://uddcl-my.sharepoint.com/:f:/r/personal/n_inostrosab_udd_cl/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fn%5Finostrosab%5Fudd%5Fcl%2FDocuments%2FPorfolio%20Color%2DPlay&share=cgoRW6%2DaDGF7RKeCHU1sDl1WEgUC%2DWk5d2vbzLbjt4QMuCO%5FkA**
+
+A computer-vision kiosk proposal for Ripley's physical stores: a color reference and clothing tastes guide a shopper toward garments; a proposed purchase-linked data loop helps Merchants learn about color × size × style. Ripley is the proposed buyer.
 
 ## Try it
 Start by choosing **“I want to see what could suit me”** (first visit, left) or **“What's new for me?”** (returning, right). On phones the choices stack in the same order. Then use demo RUT **11.111.111-1** and accept the local-demo consent.
