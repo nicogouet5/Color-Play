@@ -7,6 +7,11 @@ import {
   initRack3DViewer,
   type Rack3DController
 } from './rack3d';
+import {
+  initStoreMap,
+  type StoreCameraPreset,
+  type StoreFloorView
+} from './store-map';
 import type {
   DeploymentStageId,
   FixtureHotspotId,
@@ -218,6 +223,7 @@ function initHeroGalleryAnd3DControls(): void {
 
   const map = document.querySelector<HTMLElement>('#store-map');
   const detail = document.querySelector<HTMLElement>('#fixture-detail');
+  const locationLabel = document.querySelector<HTMLElement>('#fixture-location-label');
   const viewButtons = document.querySelectorAll<HTMLButtonElement>('[data-store-view]');
   const setView = (view: 'map' | 'fixture', location?: string) => {
     if (map) map.hidden = view !== 'map';
@@ -228,6 +234,12 @@ function initHeroGalleryAnd3DControls(): void {
       button.setAttribute('aria-pressed', String(active));
     });
     if (view === 'fixture') {
+      if (locationLabel && location) {
+        locationLabel.textContent =
+          location === "Women's clothing"
+            ? "Selected placement: Floor 1 · Women's apparel entrance (Main mall boulevard)"
+            : "Selected placement: Floor 2 · Men's apparel entrance (Escalator landing)";
+      }
       rack3d?.renderNow();
       if (location) announcePolite(`${location} entrance selected. Showing kiosk detail.`);
     }
@@ -235,12 +247,89 @@ function initHeroGalleryAnd3DControls(): void {
   viewButtons.forEach((button) => button.addEventListener('click', () => {
     setView(button.dataset.storeView === 'map' ? 'map' : 'fixture');
   }));
+  document.querySelector<HTMLButtonElement>('#back-to-store-map')?.addEventListener('click', () => {
+    setView('map');
+    document.querySelector<HTMLButtonElement>('[data-store-view="map"]')?.focus();
+  });
   document.querySelectorAll<HTMLButtonElement>('[data-map-kiosk]').forEach((button) => {
     button.addEventListener('click', () => {
       setView('fixture', button.dataset.mapKiosk);
       document.querySelector<HTMLButtonElement>('[data-store-view="fixture"]')?.focus();
     });
   });
+
+  const mapCanvas = document.querySelector<HTMLCanvasElement>('#store-map-canvas');
+  if (mapCanvas) {
+    const floorButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-map-floor]'));
+    const presetButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-map-preset]'));
+    const syncFloorButtons = (floor: StoreFloorView) => {
+      for (const button of floorButtons) {
+        const active = button.dataset.mapFloor === floor;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      }
+    };
+    const syncPresetButtons = (preset: StoreCameraPreset) => {
+      for (const button of presetButtons) {
+        const active = button.dataset.mapPreset === preset;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      }
+    };
+
+    const storeModel = initStoreMap(
+      mapCanvas,
+      (location) => {
+        setView('fixture', location);
+        document.querySelector<HTMLButtonElement>('[data-store-view="fixture"]')?.focus();
+      },
+      (floor) => {
+        syncFloorButtons(floor);
+        announcePolite(
+          floor === 'all'
+            ? 'Showing both store floors'
+            : floor === 'floor1'
+              ? "Showing Floor 1: Women's apparel"
+              : "Showing Floor 2: Men's apparel"
+        );
+      }
+    );
+
+    for (const button of floorButtons) {
+      button.addEventListener('click', () => {
+        const floor = button.dataset.mapFloor as StoreFloorView | undefined;
+        if (floor) storeModel.setFloor(floor);
+      });
+    }
+    document.querySelectorAll<HTMLButtonElement>('[data-map-focus-floor]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const floor = button.dataset.mapFocusFloor as StoreFloorView | undefined;
+        if (floor) {
+          storeModel.setFloor(floor);
+          mapCanvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+    for (const button of presetButtons) {
+      button.addEventListener('click', () => {
+        const preset = button.dataset.mapPreset as StoreCameraPreset | undefined;
+        if (preset) {
+          storeModel.setPreset(preset);
+          syncPresetButtons(preset);
+        }
+      });
+    }
+    document.querySelectorAll<HTMLButtonElement>('[data-map-rotate]').forEach((button) => {
+      button.addEventListener('click', () => storeModel.rotate(Number(button.dataset.mapRotate) * 0.32));
+    });
+    document.querySelectorAll<HTMLButtonElement>('[data-map-zoom]').forEach((button) => {
+      button.addEventListener('click', () => storeModel.zoomBy(Number(button.dataset.mapZoom) * 0.16));
+    });
+    document.querySelector<HTMLButtonElement>('#store-map-reset')?.addEventListener('click', () => {
+      storeModel.reset();
+      syncPresetButtons('isometric');
+    });
+  }
 
   const canvas3d = document.querySelector<HTMLCanvasElement>('#rack-3d-canvas');
   if (canvas3d) {
