@@ -4,7 +4,6 @@
   <p><strong>Color clarity at the rack. Better buys for Ripley.</strong></p>
   <p>
     <a href="https://nicogouet5.github.io/Color-Play/"><strong>🚀 Open Live Prototype</strong></a> ·
-    <a href="https://uddcl-my.sharepoint.com/:f:/r/personal/n_inostrosab_udd_cl/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fn%5Finostrosab%5Fudd%5Fcl%2FDocuments%2FPorfolio%20Color%2DPlay&share=cgoRW6%2DaDGF7RKeCHU1sDl1WEgUC%2DWk5d2vbzLbjt4QMuCO%5FkA"><strong>📂 Portfolio &amp; Drive</strong></a> ·
     <a href="docs/COLOR_PLAY_ALIGNMENT_v2.md">Strategy v2</a> ·
     <a href="docs/ColorPlay%20x%20Ripley.md">Strategy &amp; Brand</a> ·
     <a href="docs/IMPLEMENTATION_V2.md">Implementation &amp; Limits</a> ·
@@ -81,13 +80,9 @@
 
 ## 💼 Current Strategy
 
-The two documents supplied in `ColorPlay_x_Ripley.zip` supersede the former anonymous-first / drapes-first / SaaS proposal. The current **sell-then-embed** proposal is:
+Color-Play is a **sell-then-embed proposal** for Ripley. Commercial scenarios and negotiation assumptions are kept out of this public overview. The detailed strategy is documented separately and should be shared only with its intended audience.
 
-- **Pilot:** CLP 25 MM
-- **System / IP transfer:** CLP 200 MM (80 upfront + 120 earn-out)
-- **Embedded team (3 people):** CLP 12 MM / month
-
-*All amounts and projections are illustrative assumptions to negotiate, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.*
+*Ripley is a proposed buyer, not a confirmed partner. Amounts, projections, and IP-transfer terms are illustrative assumptions, not a deal or validated forecast. No patentability is asserted without INAPI/legal review.*
 
 ---
 
